@@ -43,7 +43,7 @@ namespace transport_catalogue {
      * @brief Добавляет остановку в транспортный каталог.
      * @param stop Структура Stop_Input с информацией об остановке.
      */
-	void TransportCatalogue::AddStop(Stop_Input stop) {
+	void TransportCatalogue::AddStop(const StopInput& stop) {
 		Stop stop_input;
 		stop_input.stop_name = stop.stop_name;
 		stop_input.coordinates = stop.coordinates;
@@ -164,7 +164,7 @@ namespace transport_catalogue {
      * @brief Добавляет расстояния между остановками в транспортный каталог.
      * @param s Структура Stop_Input с информацией об остановке и расстояниях.
      */
-	void TransportCatalogue::AddStopDistance(Stop_Input s) {
+	void TransportCatalogue::AddStopDistance(const StopInput& s) {
 		if (s.stop_dist.size() != 0) {
 			Stop* main_stop_ptr = stop_name_to_stop_[s.stop_name];
 			vector<pair<string, int>> stop_dist_main = s.stop_dist;

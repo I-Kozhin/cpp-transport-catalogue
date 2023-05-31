@@ -10,6 +10,8 @@
 namespace transport_catalogue {
     namespace geo {
 
+        static const double EarthRadius = 6371000.0; /**< Radius of the Earth in meters */
+
         /**
          * @brief Структура для представления координат (широта и долгота)
          */
@@ -50,7 +52,7 @@ namespace transport_catalogue {
             static const double dr = 3.1415926535 / 180.;
             return acos(sin(from.lat * dr) * sin(to.lat * dr)
                 + cos(from.lat * dr) * cos(to.lat * dr) * cos(abs(from.lng - to.lng) * dr))
-                * 6371000;
+                * EarthRadius;
         }
 
     }  // namespace geo

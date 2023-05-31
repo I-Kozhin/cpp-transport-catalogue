@@ -18,7 +18,7 @@ int main() {
     transport_catalogue::StatReader stat_reader(std::cin);
     (void)stat_reader.GetNumOutQueries();
     stat_reader.FillRequests();
-    stat_reader.Output(tc);
+    stat_reader.Output(std::cout, tc);
 
     return 0;
 }

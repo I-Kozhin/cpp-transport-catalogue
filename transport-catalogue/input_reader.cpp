@@ -148,7 +148,7 @@ namespace transport_catalogue {
                 }
             }
             else if (request_name == "Stop"s && is_distance == std::string::npos) {
-                Stop_Input q;
+                StopInput q;
                 q.stop_name = request_section.substr(space_colon + 1, pos_colon);
                 pair<double, double> coordinates = SplitStringByComma(list_section);
                 q.coordinates.lat = coordinates.first;
@@ -156,7 +156,7 @@ namespace transport_catalogue {
                 update_requests_stop_.push_back(q);
             }
             else if (request_name == "Stop"s && is_distance != std::string::npos) {
-                Stop_Input q;
+                StopInput q;
                 q.stop_name = request_section.substr(space_colon + 1, pos_colon);
 
                 size_t pos_sec_comma = list_section.find(",", list_section.find(",") + 1);

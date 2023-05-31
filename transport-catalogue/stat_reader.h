@@ -52,7 +52,7 @@ namespace transport_catalogue {
              *
              * @param tc The TransportCatalogue object containing the necessary data.
              */
-            void Output(TransportCatalogue& tc);
+            void Output(std::ostream& os,TransportCatalogue& tc);
 
         private:
             std::istream& input_stream_;

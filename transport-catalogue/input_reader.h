@@ -62,7 +62,7 @@ namespace transport_catalogue {
         private:
             std::istream& input_stream_;
             std::deque<BusDescription> update_requests_bus_;
-            std::deque<Stop_Input> update_requests_stop_;
+            std::deque<StopInput> update_requests_stop_;
             int num_update_queries_;
     };
 

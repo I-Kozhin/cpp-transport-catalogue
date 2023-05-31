@@ -136,7 +136,7 @@ namespace transport_catalogue {
 	public:
 
 		void AddBus(const BusDescription& bus);
-		void AddStop(Stop_Input stop);
+		void AddStop(const StopInput& stop);
 		const Bus* FindBus(std::string bus) const;
 
 		const Stop* FindStop(const std::string* stop) const;
