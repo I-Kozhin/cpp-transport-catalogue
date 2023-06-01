@@ -1,24 +1,30 @@
-#include "stat_reader.h"
 #include "geo.h"
 #include "transport_catalogue.h"
-#include "input_reader.h"
-
+#include "json_reader.h"
+#include "iostream"
+#include "map_renderer.h"
+#include "request_handler.h"
+#include <fstream>
+using namespace transport_catalogue;
 using namespace std;
 
+
 int main() {
-    transport_catalogue::TransportCatalogue tc;
-    transport_catalogue::InputReader input_reader(std::cin);
-    (void)input_reader.GetNumUpdateQueries();
-    input_reader.FillRequests();
+	
+	
+	transport_catalogue::TransportCatalogue tc;
+	transport_catalogue::InputReaderJson reader(std::cin);
+	(void)reader.ReadInputJsonRequest();
 
-    input_reader.UpdStop(tc);
-    input_reader.UpdBus(tc);
-    input_reader.UpdStopDist(tc);
+	reader.UpdStop(tc);
+	reader.UpdBus(tc);
+	reader.UpdStopDist(tc);
+	Render_data rd = reader.GetRenderData();
+	MapRenderer mapdrawer(rd);
+	reader.ManageOutputRequests(tc, mapdrawer);
+	
 
-    transport_catalogue::StatReader stat_reader(std::cin);
-    (void)stat_reader.GetNumOutQueries();
-    stat_reader.FillRequests();
-    stat_reader.Output(std::cout, tc);
+	return 0;
 
-    return 0;
+
 }
