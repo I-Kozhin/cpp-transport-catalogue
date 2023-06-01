@@ -235,6 +235,35 @@ void MapRenderer::DrawRoutes(const transport_catalogue::TransportCatalogue& tc, 
 }
 
 
+// декомпозиция 3 Отрисовка остановок и текста для маршрутов
+
+void MapRenderer::DrawStops(const TransportCatalogue& tc, const SphereProjector& proj_one,
+    const std::set<std::string>& stops_for_route, std::vector<svg::Text>& stops_names,
+    std::vector<svg::Circle>& stops_circles) {
+    for (auto i = stops_for_route.begin(); i != stops_for_route.end(); ++i) {
+        Circle c;
+        const Stop* one = tc.FindStop(*i);
+        const svg::Point screen_coord = proj_one(one->coordinates);
+
+        c.SetRadius(map_render_data_.stop_radius).SetCenter({ screen_coord.x, screen_coord.y });
+        c.SetFillColor("white");
+        stops_circles.push_back(c);
+
+        Text stop_description_font;
+        Text stop_description;
+
+        stop_description_font.SetPosition(Point(screen_coord.x, screen_coord.y)).SetOffset(Point(map_render_data_.stop_label_offset[0], map_render_data_.stop_label_offset[1])).SetFontSize(map_render_data_.stop_label_font_size)\
+            .SetFontFamily("Verdana").SetData(*i)\
+            .SetFillColor(map_render_data_.underlayer_color[0]).SetStrokeColor(map_render_data_.underlayer_color[0]).SetStrokeWidth(map_render_data_.underlayer_width).SetStrokeLineCap(StrokeLineCap::ROUND).SetStrokeLineJoin(StrokeLineJoin::ROUND);
+
+        stop_description.SetPosition(Point(screen_coord.x, screen_coord.y)).SetOffset(Point(map_render_data_.stop_label_offset[0], map_render_data_.stop_label_offset[1])).SetFontSize(map_render_data_.stop_label_font_size)\
+            .SetFontFamily("Verdana").SetData(*i).SetFillColor("black");
+
+        stops_names.push_back(stop_description_font);
+        stops_names.push_back(stop_description);
+    }
+}
+
 
 /**
  * @brief Draws the routes and stops on a map and returns the SVG document as a string.
@@ -269,37 +298,11 @@ std::string MapRenderer::DrawRouteGetDoc(const TransportCatalogue& tc) {
     }
 
     // декомпозиция 2 Отрисовка маршрутов
-    DrawRoutes(tc, buses, proj_one, colors, routes_text,routes_vec);
+    DrawRoutes(tc, buses, proj_one, colors, routes_text, routes_vec);
 
-    // Отрисовка остановок и текста для маршрутов
-    for (auto i = stops_for_route.begin(); i != stops_for_route.end(); ++i) {
-
-        Circle c;
-        const Stop* one = tc.FindStop(*i);
-        const svg::Point screen_coord = proj_one(one->coordinates);
-
-
-        c.SetRadius(map_render_data_.stop_radius).SetCenter({ screen_coord.x, screen_coord.y });
-        c.SetFillColor("white");
-        stops_circles.push_back(c);
-
-
-
-        Text stop_description_font;
-        Text stop_description;
-
-        stop_description_font.SetPosition(Point(screen_coord.x, screen_coord.y)).SetOffset(Point(map_render_data_.stop_label_offset[0], map_render_data_.stop_label_offset[1])).SetFontSize(map_render_data_.stop_label_font_size)\
-            .SetFontFamily("Verdana").SetData(*i)\
-            .SetFillColor(map_render_data_.underlayer_color[0]).SetStrokeColor(map_render_data_.underlayer_color[0]).SetStrokeWidth(map_render_data_.underlayer_width).SetStrokeLineCap(StrokeLineCap::ROUND).SetStrokeLineJoin(StrokeLineJoin::ROUND);
-
-
-        stop_description.SetPosition(Point(screen_coord.x, screen_coord.y)).SetOffset(Point(map_render_data_.stop_label_offset[0], map_render_data_.stop_label_offset[1])).SetFontSize(map_render_data_.stop_label_font_size)\
-            .SetFontFamily("Verdana").SetData(*i).SetFillColor("black");
-
-        stops_names.push_back(stop_description_font);
-        stops_names.push_back(stop_description);
-
-    }
+    // декомпозиция 3 Отрисовка остановок и текста для маршрутов
+    DrawStops(tc, proj_one, stops_for_route, stops_names, stops_circles);
+    
 
     // Создание SVG-документа
     svg::Document  doc;
