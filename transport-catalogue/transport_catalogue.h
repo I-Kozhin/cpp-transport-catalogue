@@ -27,11 +27,11 @@ namespace transport_catalogue {
 
 	};
     /**
-     * @struct Stop_Input
+     * @struct StopInput
      *
      * @brief Struct representing a stop input with a stop name, coordinates, and distances to other stops.
      */
-	struct Stop_Input {
+	struct StopInput {
         std::string stop_name;
         geo::Coordinates coordinates;
         std::vector<std::pair<std::string, int>> stop_dist;
@@ -133,36 +133,36 @@ namespace transport_catalogue {
      * @brief Class representing a transport catalogue with buses, stops, and related methods.
      */
 	class TransportCatalogue {
-	public:
+        public:
 
-		void AddBus(const BusDescription& bus);
-		void AddStop(const StopInput& stop);
-		const Bus* FindBus(std::string bus) const;
+            void AddBus(const BusDescription& bus);
+            void AddStop(const StopInput& stop);
+            const Bus* FindBus(std::string bus) const;
 
-		const Stop* FindStop(const std::string* stop) const;
-		AllBusInfoBusResponse GetAllBusInfo(std::string_view bus)  ;
+            const Stop* FindStop(const std::string* stop) const;
+            AllBusInfoBusResponse GetAllBusInfo(std::string_view bus)  ;
 
-		std::set<std::string> GetStopInfo(std::string_view s) const;
+            std::set<std::string> GetStopInfo(std::string_view s) const;
 
-		void AddStopDistance(Stop_Input s);
+            void AddStopDistance(const StopInput& s);
 
-        /**
-         * @brief Retrieves the distance between two stops.
-         *
-         * @param s1 Pointer to the first stop.
-         * @param s2 Pointer to the second stop.
-         * @return The distance between the two stops, or 0 if not found.
-         */
-		int GetStopDistance( Stop* s1, Stop* s2)  const ;
-		
-	
+            /**
+             * @brief Retrieves the distance between two stops.
+             *
+             * @param s1 Pointer to the first stop.
+             * @param s2 Pointer to the second stop.
+             * @return The distance between the two stops, or 0 if not found.
+             */
+            int GetStopDistance( Stop* s1, Stop* s2)  const ;
+            
+        
 
-	private:
-		std::deque<Bus> buses_;
-		std::deque<Stop> stops_;
-		std::unordered_map<std::string, Stop*> stop_name_to_stop_;
-		std::unordered_map<std::string_view, Bus*> bus_name_to_bus_;
-		std::unordered_map<std::string_view, std::set<std::string>> stop_info_;
-		std::unordered_map<std::pair<Stop*, Stop*>, int, detail::PairOfStopPointerUsingString> stops_distance_;
+        private:
+            std::deque<Bus> buses_;
+            std::deque<Stop> stops_;
+            std::unordered_map<std::string, Stop*> stop_name_to_stop_;
+            std::unordered_map<std::string_view, Bus*> bus_name_to_bus_;
+            std::unordered_map<std::string_view, std::set<std::string>> stop_info_;
+            std::unordered_map<std::pair<Stop*, Stop*>, int, detail::PairOfStopPointerUsingString> stops_distance_;
 	};
 }

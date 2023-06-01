@@ -64,34 +64,34 @@ namespace transport_catalogue {
 	 * 
 	 * @param tc Объект TransportCatalogue, используемый для обработки запросов
 	 */
-	void StatReader::Output(TransportCatalogue& tc) {
+	void StatReader::Output(ostream& os, TransportCatalogue& tc) {
 		for (const auto& element : requests_) {
 			if (element.name == "Bus"s) {
 				AllBusInfoBusResponse r = tc.GetAllBusInfo(element.request);
 				if (r.quant_stops == 0) {
-					cout << "Bus " << element.request << ": "s << "not found" << endl;
-				} 
-                else {
-					cout << "Bus " << r.bus_name << ": "s << r.quant_stops << " stops on route, "s << r.quant_uniq_stops << " unique stops, "s << r.route_length << " route length, "s << r.route_curvature << " curvature"s << endl;
+					os << "Bus " << element.request << ": "s << "not found" << endl;
+				}
+				else {
+					os << "Bus " << r.bus_name << ": "s << r.quant_stops << " stops on route, "s << r.quant_uniq_stops << " unique stops, "s << r.route_length << " route length, "s << r.route_curvature << " curvature"s << endl;
 				}
 			}
 
 			if (element.name == "Stop"s) {
 				const Stop* myStop = tc.FindStop(&element.request);
 				if (myStop == nullptr) {
-					cout << "Stop " << element.request << ": not found" << endl;
-				} 
-                else {
+					os << "Stop " << element.request << ": not found" << endl;
+				}
+				else {
 					set<string> r = tc.GetStopInfo(element.request);
 					if (r.empty()) {
-						cout << "Stop " << element.request << ": no buses" << endl;
-					} 
-                    else {
-						cout << "Stop " << element.request << ": "s << "buses ";
+						os << "Stop " << element.request << ": no buses" << endl;
+					}
+					else {
+						os << "Stop " << element.request << ": "s << "buses ";
 						for (const auto& el : r) {
-							cout << el << " ";
+							os << el << " ";
 						}
-						cout << endl;
+						os << endl;
 					}
 				}
 			}
