@@ -62,56 +62,56 @@ namespace transport_catalogue {
 		public:
 			
 			/**
-         	* @brief Adds a bus to the transport catalogue.
-         	*
-         	* @param bus The bus description.
-         	*/
+         	 * @brief Adds a bus to the transport catalogue.
+         	 *
+         	 * @param bus The bus description.
+         	 */
 			void AddBus(const domain::BusDescription& bus);
 
 			/**
-         	* @brief Adds a stop to the transport catalogue.
-         	*
-         	* @param stop The stop to add.
-         	*/
+         	 * @brief Adds a stop to the transport catalogue.
+         	 *
+         	 * @param stop The stop to add.
+         	 */
 			void AddStop(domain::Stop stop);
 
 			/**
-         	* @brief Finds a bus by its name.
-         	*
-         	* @param bus The name of the bus.
-         	* @return A pointer to the found bus, or nullptr if not found.
-         	*/
+         	 * @brief Finds a bus by its name.
+         	 *
+         	 * @param bus The name of the bus.
+         	 * @return A pointer to the found bus, or nullptr if not found.
+         	 */
 			const domain::Bus* FindBus(std::string_view bus) const;
 
 			/**
-         	* @brief Finds a stop by its name.
-         	*
-         	* @param stop The name of the stop.
-         	* @return A pointer to the found stop, or nullptr if not found.
-         	*/
+         	 * @brief Finds a stop by its name.
+         	 *
+         	 * @param stop The name of the stop.
+         	 * @return A pointer to the found stop, or nullptr if not found.
+         	 */
 			virtual const domain::Stop* FindStop(std::string_view stop) const;
 
 			/**
-         	* @brief Retrieves the information of a bus, including the number of stops, number of unique stops, route length, and route curvature.
-         	*
-         	* @param bus The name of the bus.
-         	* @return The information of the bus.
-         	*/
+         	 * @brief Retrieves the information of a bus, including the number of stops, number of unique stops, route length, and route curvature.
+         	 *
+         	 * @param bus The name of the bus.
+         	 * @return The information of the bus.
+         	 */
 			domain::AllBusInfoBusResponse GetAllBusInfo(std::string_view bus) const;
 
 			/**
-         	* @brief Retrieves the set of bus names that pass through a stop.
-         	*
-         	* @param s The name of the stop.
-         	* @return The set of bus names.
-         	*/
+         	 * @brief Retrieves the set of bus names that pass through a stop.
+         	 *
+         	 * @param s The name of the stop.
+         	 * @return The set of bus names.
+         	 */
 			std::set<std::string> GetStopInfo(std::string_view s) const;
 
 			/**
-         	* @brief Adds stop distances to the transport catalogue.
-         	*
-         	* @param distance The stop distances description.
-         	*/
+         	 * @brief Adds stop distances to the transport catalogue.
+         	 *
+         	 * @param distance The stop distances description.
+         	 */
 			void AddStopDistance(domain::StopDistancesDescription distance);
 
 			/**
@@ -124,17 +124,17 @@ namespace transport_catalogue {
 			int GetStopDistance(const domain::Stop& s1, const domain::Stop& s2)  const;
 
 			/**
-         	* @brief Retrieves the list of buses in the transport catalogue.
-         	*
-         	* @return The list of buses.
-         	*/
+         	 * @brief Retrieves the list of buses in the transport catalogue.
+         	 *
+         	 * @return The list of buses.
+         	 */
 			const std::deque<domain::Bus>& GetBuses() const;
 
 			/**
-         	* @brief Retrieves the list of stops in the transport catalogue.
-         	*
-         	* @return The list of stops.
-         	*/
+         	 * @brief Retrieves the list of stops in the transport catalogue.
+         	 *
+         	 * @return The list of stops.
+         	 */
 			const std::deque<domain::Stop>& GetStops() const;
 
 		private:
