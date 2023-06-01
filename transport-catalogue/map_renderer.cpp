@@ -128,10 +128,10 @@ bool  CheckSameStations(const deque<string_view>& current_stops) {
 
 
 /**
- * @brief Constructs a MapRenderer object with the given Render_data.
- * @param render_data The Render_data object containing rendering settings.
+ * @brief Constructs a MapRenderer object with the given RenderData.
+ * @param render_data The RenderData object containing rendering settings.
  */
-MapRenderer::MapRenderer(Render_data & render_data)
+MapRenderer::MapRenderer(RenderData& render_data)
     :map_render_data_(render_data)
 {
    
@@ -261,8 +261,7 @@ std::string MapRenderer::DrawRouteGetDoc(const TransportCatalogue& tc) {
 
     }
 
-
-    // Process stops and their labels 
+ 
     for (auto i = stops_for_route.begin(); i != stops_for_route.end(); ++i)
     {
 

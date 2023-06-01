@@ -24,7 +24,7 @@ namespace domain {
 		std::string name;
 	};
 
-	 /**
+	/**
      * @struct StopDistancesDescription
      *
      * @brief Struct representing a stop distances description with a stop name and distances to other stops.

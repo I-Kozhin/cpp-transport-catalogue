@@ -14,10 +14,10 @@
 
 
 /**
- * @struct Render_data
+ * @struct Renderdata
  * @brief A structure that holds the rendering data for the map.
  */
-struct Render_data {
+struct RenderData {
 
     double width;                               /*< The width of the map. */
     double height;                              /*< The height of the map. */
@@ -137,7 +137,7 @@ class MapRenderer {
          * @brief Constructs a MapRenderer object.
          * @param render_data The rendering data for the map.
          */
-        MapRenderer( Render_data& render_data);
+        MapRenderer(RenderData& render_data);
 
         /**
          * @brief Draws the routes on the map and returns the SVG document as a string.
@@ -154,6 +154,6 @@ class MapRenderer {
         void Render(svg::Document map_, std::ostream& out);
 
     private:
-        Render_data& map_render_data_;
+        RenderData& map_render_data_;
 };
 
