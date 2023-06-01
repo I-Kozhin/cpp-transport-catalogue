@@ -5,108 +5,35 @@
  *@brief This file contains the declaration of the TransportCatalogue class and related structs and functions.
  */
 
+#include "domain.h"
+
 #include <string>
-#include <algorithm>
 #include <deque>
-#include <unordered_map>
 #include <unordered_set>
-#include <utility>
-#include <math.h>
 #include "geo.h"
 #include <functional> 
+#include <set>
+
 
 namespace transport_catalogue {
-    /**
-     * @struct Stop
-     *
-     * @brief Struct representing a stop with a stop name and coordinates.
-     */
-	struct Stop {
-        std::string stop_name;
-        geo::Coordinates coordinates;
 
-	};
-    /**
-     * @struct StopInput
-     *
-     * @brief Struct representing a stop input with a stop name, coordinates, and distances to other stops.
-     */
-	struct StopInput {
-        std::string stop_name;
-        geo::Coordinates coordinates;
-        std::vector<std::pair<std::string, int>> stop_dist;
-	};
-
-    /**
-     * @struct BusDescription
-     *
-     * @brief Struct representing a bus with a bus name, list of stops, and type.
-     */
-	struct BusDescription {
-        std::string bus_name;
-        std::vector<std::string> stops;
-        std::string type;
-    };
-	
-    /**
-     * @struct AllBusInfoBusResponse
-     *
-     * @brief Struct representing the information of a bus response including the bus name, number of stops, number of unique stops, route length, and route curvature.
-     */
-	struct AllBusInfoBusResponse {
-        std::string bus_name;
-        int quant_stops;
-        int quant_uniq_stops;
-        double route_length = 0;
-        double route_curvature = 0;
-    };
-
-
-    /**
-     * @struct Bus
-     *
-     * @brief Struct representing a bus with a bus name, list of stops, and type.
-     */
-	struct Bus {
-		std::string bus_name;
-		std::deque<std::string*> stops;
-		std::string type;
-	};
 
 	namespace detail {
-         /**
-         * @struct PairOfStopPointerUsing_hash
-         *
-         * @brief Struct representing a hash function for a pair of stop pointers.
-         */
-		struct PairOfStopPointerUsing_hash {
-            /**
-             * @brief Calculates the hash value for a pair of stop pointers.
-             *
-             * @param p The pair of stop pointers.
-             * @return The calculated hash value.
-             */
-			std::size_t operator()(const std::pair<Stop*, Stop*>& p) const {
-				std::size_t hash1 = std::hash<Stop*>{}(p.first);
-				std::size_t hash2 = std::hash<Stop*>{}(p.second);
-				std::size_t combined_hash = hash1 + hash2;
-				return combined_hash;
-			}
-		};
 
-        /**
+		/**
          * @struct PairOfStopPointerUsingString
          *
          * @brief Struct representing a hash function for a pair of stop pointers using string hashing.
          */
 		struct PairOfStopPointerUsingString {
-            /**
+
+			/**
              * @brief Calculates the hash value for a pair of stop pointers using string hashing.
              *
              * @param p The pair of stop pointers.
              * @return The calculated hash value.
              */
-			std::size_t operator()(const std::pair<Stop*,   Stop*>& p) const {
+			std::size_t operator()(const std::pair<const  domain::Stop*, const  domain::Stop*>& p) const {
 				const std::size_t constantal = 31;
 				std::size_t hash_value_one = 0;
 				std::size_t hash_value_two = 0;
@@ -121,48 +48,101 @@ namespace transport_catalogue {
 					p_pow = (p_pow * constantal) % std::size_t(-1);
 				}
 
-
 				return hash_value_one + hash_value_two * constantal;
 			}
 		};
 	}
 
-    /**
+	/**
      * @class TransportCatalogue
      *
      * @brief Class representing a transport catalogue with buses, stops, and related methods.
      */
 	class TransportCatalogue {
-        public:
+		public:
+			
+			/**
+         	* @brief Adds a bus to the transport catalogue.
+         	*
+         	* @param bus The bus description.
+         	*/
+			void AddBus(const domain::BusDescription& bus);
 
-            void AddBus(const BusDescription& bus);
-            void AddStop(const StopInput& stop);
-            const Bus* FindBus(std::string bus) const;
+			/**
+         	* @brief Adds a stop to the transport catalogue.
+         	*
+         	* @param stop The stop to add.
+         	*/
+			void AddStop(domain::Stop stop);
 
-            const Stop* FindStop(const std::string* stop) const;
-            AllBusInfoBusResponse GetAllBusInfo(std::string_view bus)  ;
+			/**
+         	* @brief Finds a bus by its name.
+         	*
+         	* @param bus The name of the bus.
+         	* @return A pointer to the found bus, or nullptr if not found.
+         	*/
+			const domain::Bus* FindBus(std::string_view bus) const;
 
-            std::set<std::string> GetStopInfo(std::string_view s) const;
+			/**
+         	* @brief Finds a stop by its name.
+         	*
+         	* @param stop The name of the stop.
+         	* @return A pointer to the found stop, or nullptr if not found.
+         	*/
+			virtual const domain::Stop* FindStop(std::string_view stop) const;
 
-            void AddStopDistance(const StopInput& s);
+			/**
+         	* @brief Retrieves the information of a bus, including the number of stops, number of unique stops, route length, and route curvature.
+         	*
+         	* @param bus The name of the bus.
+         	* @return The information of the bus.
+         	*/
+			domain::AllBusInfoBusResponse GetAllBusInfo(std::string_view bus) const;
 
-            /**
-             * @brief Retrieves the distance between two stops.
-             *
-             * @param s1 Pointer to the first stop.
-             * @param s2 Pointer to the second stop.
-             * @return The distance between the two stops, or 0 if not found.
-             */
-            int GetStopDistance( Stop* s1, Stop* s2)  const ;
-            
-        
+			/**
+         	* @brief Retrieves the set of bus names that pass through a stop.
+         	*
+         	* @param s The name of the stop.
+         	* @return The set of bus names.
+         	*/
+			std::set<std::string> GetStopInfo(std::string_view s) const;
 
-        private:
-            std::deque<Bus> buses_;
-            std::deque<Stop> stops_;
-            std::unordered_map<std::string, Stop*> stop_name_to_stop_;
-            std::unordered_map<std::string_view, Bus*> bus_name_to_bus_;
-            std::unordered_map<std::string_view, std::set<std::string>> stop_info_;
-            std::unordered_map<std::pair<Stop*, Stop*>, int, detail::PairOfStopPointerUsingString> stops_distance_;
+			/**
+         	* @brief Adds stop distances to the transport catalogue.
+         	*
+         	* @param distance The stop distances description.
+         	*/
+			void AddStopDistance(domain::StopDistancesDescription distance);
+
+			/**
+			 * @brief Retrieves the distance between two stops.
+			 *
+			 * @param s1 First stop.
+			 * @param s2 Second stop.
+			 * @return The distance between the two stops, or 0 if not found.
+			 */
+			int GetStopDistance(const domain::Stop& s1, const domain::Stop& s2)  const;
+
+			/**
+         	* @brief Retrieves the list of buses in the transport catalogue.
+         	*
+         	* @return The list of buses.
+         	*/
+			const std::deque<domain::Bus>& GetBuses() const;
+
+			/**
+         	* @brief Retrieves the list of stops in the transport catalogue.
+         	*
+         	* @return The list of stops.
+         	*/
+			const std::deque<domain::Stop>& GetStops() const;
+
+		private:
+			std::deque<domain::Bus> buses_;		/**< The list of buses */
+			std::deque<domain::Stop> stops_;	/**< The list of stops */
+        	std::unordered_map<std::string_view, domain::Stop*> stop_name_to_stop_; /**< The map of stop names to stop pointers */
+        	std::unordered_map<std::string_view, domain::Bus*> bus_name_to_bus_; 	/**< The map of bus names to bus pointers */
+        	std::unordered_map<std::string_view, std::set<std::string>> stop_info_; /**< The map of stop names to set of bus names */
+			std::unordered_map<std::pair<const domain::Stop*, const domain::Stop*>, int, detail::PairOfStopPointerUsingString> stops_distance_; /**< The map of pairs of stop pointers to distance */
 	};
-}
+}  // namespace transport_catalogue
