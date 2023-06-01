@@ -157,5 +157,6 @@ class MapRenderer {
         RenderData& map_render_data_;
 
         std::deque<domain::Bus> GetSortedBuses(const transport_catalogue::TransportCatalogue& tc);
+        void DrawRoutes(const transport_catalogue::TransportCatalogue& tc, std::deque<domain::Bus>& buses, const SphereProjector& proj_one,
+    std::map<std::string, svg::Color>& colors, std::vector<svg::Text>& routes_text, std::vector<svg::Polyline>& routes_vec);
 };
-

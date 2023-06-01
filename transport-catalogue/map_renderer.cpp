@@ -147,43 +147,14 @@ std::deque<domain::Bus> MapRenderer::GetSortedBuses(const transport_catalogue::T
     return buses;
 }
 
-
-/**
- * @brief Draws the routes and stops on a map and returns the SVG document as a string.
- * @param tc The TransportCatalogue object.
- * @return The SVG document as a string.
- */
-std::string MapRenderer::DrawRouteGetDoc(const TransportCatalogue& tc) {
-
-    vector<Text> stops_names;
-    vector<Circle> stops_circles;
-    vector<svg::Document> docs;
-    vector<svg::Polyline> routes_vec;
-    vector<svg::Text> routes_text;
-    std::vector<Color> color_palette = map_render_data_.color_palette;
-    std::deque<Stop> stops = tc.GetStops();
-    // декомпозиция 1
-    std::deque<Bus> buses = GetSortedBuses(tc);
-
-    std::map<string, Color> colors = GetColorForRoute(buses, color_palette);
-    vector<geo::Coordinates> geo_coords = GetAllCoordinates(tc, buses);
-
-    const SphereProjector proj_one{
-        geo_coords.begin(), geo_coords.end(), map_render_data_.width, map_render_data_.height, map_render_data_.padding
-    };
-
-    std::set<std::string> stops_for_route;
-
-    for (const auto& el : stops) {
-        if (tc.GetStopInfo(el.stop_name).size() != 0) {
-            stops_for_route.insert(el.stop_name);
-        }
-    }
-
+// декомпозиция 2 отрисовка маршрутов 
+void MapRenderer::DrawRoutes(const transport_catalogue::TransportCatalogue& tc, std::deque<domain::Bus>& buses, const SphereProjector& proj_one,
+    std::map<std::string, svg::Color>& colors, std::vector<svg::Text>& routes_text, std::vector<svg::Polyline>& routes_vec) {
     for (const auto& bus : buses) {
-        if (bus.stops.size() == 0) { 
+        if (bus.stops.size() == 0) {
             string empty_doc;
-            return empty_doc; }
+            return;
+        }
 
         bool same_stations = true;
         RoutDescription rout_description;
@@ -199,11 +170,11 @@ std::string MapRenderer::DrawRouteGetDoc(const TransportCatalogue& tc) {
             }
 
         }
+
         rout_description.route_color = current_color;
         rout_description.last_stop = bus.stops.back();
 
         vector<svg::Point> point_to_draw;
-
 
         if (bus.type != "true") {
             current_stops = GetStopsForNonRounTtip(bus.stops);
@@ -211,9 +182,7 @@ std::string MapRenderer::DrawRouteGetDoc(const TransportCatalogue& tc) {
         }
         else {
             current_stops = bus.stops;
-
         }
-
 
         for (int i = 0; i < current_stops.size(); i++) {
             const Stop* one = tc.FindStop(current_stops[i]);
@@ -255,9 +224,6 @@ std::string MapRenderer::DrawRouteGetDoc(const TransportCatalogue& tc) {
 
             routes_text.push_back(route_font_not_same);
             routes_text.push_back(route_not_same);
-
-
-
         }
 
         svg::Document  doc;
@@ -265,13 +231,48 @@ std::string MapRenderer::DrawRouteGetDoc(const TransportCatalogue& tc) {
         polyline.SetFillColor(NoneColor).SetStrokeColor(current_color).SetStrokeWidth(map_render_data_.line_width).SetStrokeLineCap(StrokeLineCap::ROUND).SetStrokeLineJoin(StrokeLineJoin::ROUND);
 
         routes_vec.push_back(polyline);
+    }
+}
 
 
+
+/**
+ * @brief Draws the routes and stops on a map and returns the SVG document as a string.
+ * @param tc The TransportCatalogue object.
+ * @return The SVG document as a string.
+ */
+std::string MapRenderer::DrawRouteGetDoc(const TransportCatalogue& tc) {
+    // Инициализация векторов и переменных
+    vector<Text> stops_names;
+    vector<Circle> stops_circles;
+    vector<svg::Document> docs;
+    vector<svg::Polyline> routes_vec;
+    vector<svg::Text> routes_text;
+    std::vector<Color> color_palette = map_render_data_.color_palette;
+    std::deque<Stop> stops = tc.GetStops();
+    // декомпозиция 1 
+    std::deque<Bus> buses = GetSortedBuses(tc);
+
+    std::map<string, Color> colors = GetColorForRoute(buses, color_palette);
+    vector<geo::Coordinates> geo_coords = GetAllCoordinates(tc, buses);
+
+    const SphereProjector proj_one{
+        geo_coords.begin(), geo_coords.end(), map_render_data_.width, map_render_data_.height, map_render_data_.padding
+    };
+
+    std::set<std::string> stops_for_route;
+
+    for (const auto& el : stops) {
+        if (tc.GetStopInfo(el.stop_name).size() != 0) {
+            stops_for_route.insert(el.stop_name);
+        }
     }
 
- 
-    for (auto i = stops_for_route.begin(); i != stops_for_route.end(); ++i)
-    {
+    // декомпозиция 2 Отрисовка маршрутов
+    DrawRoutes(tc, buses, proj_one, colors, routes_text,routes_vec);
+
+    // Отрисовка остановок и текста для маршрутов
+    for (auto i = stops_for_route.begin(); i != stops_for_route.end(); ++i) {
 
         Circle c;
         const Stop* one = tc.FindStop(*i);
@@ -300,7 +301,7 @@ std::string MapRenderer::DrawRouteGetDoc(const TransportCatalogue& tc) {
 
     }
 
-
+    // Создание SVG-документа
     svg::Document  doc;
     for (const auto& polyline : routes_vec) {
         doc.Add(std::move(polyline));
