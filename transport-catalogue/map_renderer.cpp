@@ -137,7 +137,14 @@ MapRenderer::MapRenderer(RenderData& render_data)
    
 }
 
+std::deque<domain::Bus> MapRenderer::GetSortedBuses(const transport_catalogue::TransportCatalogue& tc) {
+    std::deque<domain::Bus> buses = tc.GetBuses();
+    std::sort(buses.begin(), buses.end(), [](const domain::Bus& a, const domain::Bus& b) {
+        return a.bus_name < b.bus_name;
+    });
 
+    return buses;
+}
 
 /**
  * @brief Draws the routes and stops on a map and returns the SVG document as a string.
@@ -152,10 +159,9 @@ std::string MapRenderer::DrawRouteGetDoc(const TransportCatalogue& tc) {
     vector<svg::Polyline> routes_vec;
     vector<svg::Text> routes_text;
     std::vector<Color> color_palette = map_render_data_.color_palette;
-    std::deque<Bus> buses = tc.GetBuses();
     std::deque<Stop> stops = tc.GetStops();
-    std::sort(buses.begin(), buses.end(),
-        [](const Bus& a, const Bus& b) { return a.bus_name < b.bus_name; });
+
+    std::deque<Bus> buses = GetSortedBuses(tc);
 
     std::map<string, Color> colors = GetColorForRoute(buses, color_palette);
     vector<geo::Coordinates> geo_coords = GetAllCoordinates(tc, buses);

@@ -155,5 +155,7 @@ class MapRenderer {
 
     private:
         RenderData& map_render_data_;
+
+        std::deque<domain::Bus> GetSortedBuses(const transport_catalogue::TransportCatalogue& tc);
 };
 
