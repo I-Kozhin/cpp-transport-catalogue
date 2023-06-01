@@ -137,6 +137,7 @@ MapRenderer::MapRenderer(RenderData& render_data)
    
 }
 
+// декомпозиция 1 Получение и сортировка автобусов
 std::deque<domain::Bus> MapRenderer::GetSortedBuses(const transport_catalogue::TransportCatalogue& tc) {
     std::deque<domain::Bus> buses = tc.GetBuses();
     std::sort(buses.begin(), buses.end(), [](const domain::Bus& a, const domain::Bus& b) {
@@ -145,6 +146,7 @@ std::deque<domain::Bus> MapRenderer::GetSortedBuses(const transport_catalogue::T
 
     return buses;
 }
+
 
 /**
  * @brief Draws the routes and stops on a map and returns the SVG document as a string.
@@ -160,7 +162,7 @@ std::string MapRenderer::DrawRouteGetDoc(const TransportCatalogue& tc) {
     vector<svg::Text> routes_text;
     std::vector<Color> color_palette = map_render_data_.color_palette;
     std::deque<Stop> stops = tc.GetStops();
-
+    // декомпозиция 1
     std::deque<Bus> buses = GetSortedBuses(tc);
 
     std::map<string, Color> colors = GetColorForRoute(buses, color_palette);
