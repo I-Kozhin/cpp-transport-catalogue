@@ -77,7 +77,7 @@ namespace transport_catalogue {
             */
             void ManageOutputRequests(TransportCatalogue& tc, MapRenderer& mr);
 
-            Render_data GetRenderData();
+            RenderData GetRenderData();
 
 
 
@@ -88,7 +88,7 @@ namespace transport_catalogue {
             std::deque<domain::BusDescription> update_requests_bus_;
             std::deque<domain::Stop> update_requests_stop_;
             std::vector<domain::StopDistancesDescription> distances_;   ///< The stop distances.
-            Render_data render_data_;
+            RenderData render_data_;
             json::Document load_;   ///< The loaded JSON document.
 
     };
