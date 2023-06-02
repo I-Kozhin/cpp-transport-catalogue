@@ -70,7 +70,7 @@ namespace domain {
 	};
 
 
-	 /**
+	/**
      * @struct Bus
      *
      * @brief Struct representing a bus with a bus name, list of stops, and type.
