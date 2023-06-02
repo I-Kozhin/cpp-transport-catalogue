@@ -55,7 +55,7 @@ bool IsZero(double value) {
  * @param color_palette The color palette to choose from.
  * @return A map associating each bus route name with its corresponding color.
  */
-std::map<string, Color> GetColorForRoute(const std::deque<Bus>& buses, const std::vector<Color> color_palette) {
+std::map<string, Color> GetColorForRoute(const std::deque<Bus>& buses, const std::vector<Color>& color_palette) {
     std::map<string, Color> result;
     int index_color = 0;
     for (const auto& bus : buses) {
