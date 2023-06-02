@@ -89,7 +89,7 @@ namespace transport_catalogue {
 				}
 				bs.bus_name = json_obj.at("name").AsString();
 
-				auto trip = json_obj.at("input_stream_roundtrip").AsBool();
+				auto trip = json_obj.at("is_roundtrip").AsBool();
 				if (trip) {
 					bs.type = "true"s;
 				}
