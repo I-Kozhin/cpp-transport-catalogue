@@ -14,9 +14,13 @@
 #include <functional> 
 #include <set>
 
-
 namespace transport_catalogue {
 
+	struct OutputRequest {
+		int id;
+		std::string type;
+		std::string name;
+	};
 
 	namespace detail {
 

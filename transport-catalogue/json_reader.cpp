@@ -8,6 +8,7 @@
 #include "geo.h"
 #include "svg.h"
 #include "json_reader.h"
+#include "json_builder.h"
 
 
 using namespace json;
@@ -16,17 +17,17 @@ using namespace domain;
 using namespace svg;
 
 namespace transport_catalogue {
-	
+
 	/**
      * @brief Gets the color from a JSON node.
      * @param el The JSON node representing the color.
      * @return The color extracted from the JSON node.
      */
-	svg::Color GetColor(json::Node el) {
+	svg::Color GetColor(const json::Node& el) {
 		svg::Color color;
 
 		if (el.IsString()) {
-			color=el.AsString();
+			color = el.AsString();
 		}
 		else {
 			if (el.AsArray().size() == 3) {
@@ -52,15 +53,15 @@ namespace transport_catalogue {
 	}
 
 
-	InputReaderJson::InputReaderJson(istream& is) : input_stream_(is) , load_(json::Load(is)){
+	InputReaderJson::InputReaderJson(istream& is) : input_stream_(is), load_(json::Load(is)) {
 
 	}
 
 
 	void InputReaderJson::ReadInputJsonBaseRequest() {
-		const auto& json_array = ((load_.GetRoot()).AsMap()).at("base_requests"s);
+		const auto& json_array = ((load_.GetRoot()).AsDict()).at("base_requests"s);
 		for (const auto& file : json_array.AsArray()) {
-			const auto& json_obj = file.AsMap();
+			const auto& json_obj = file.AsDict();
 			if (json_obj.at("type"s) == "Stop"s) {
 				Stop stopjson;
 				stopjson.stop_name = json_obj.at("name").AsString();
@@ -71,7 +72,7 @@ namespace transport_catalogue {
 				input_stop_dist.stop_name = json_obj.at("name").AsString();
 				auto heighbors = json_obj.at("road_distances");
 
-				for (auto el : heighbors.AsMap()) {
+				for (auto el : heighbors.AsDict()) {
 					input_stop_dist.distances.push_back(make_pair(el.first, el.second.AsInt()));
 
 				}
@@ -88,25 +89,23 @@ namespace transport_catalogue {
 				}
 				bs.bus_name = json_obj.at("name").AsString();
 
-				auto trip = json_obj.at("is_roundtrip").AsBool();
+				auto trip = json_obj.at("input_stream_roundtrip").AsBool();
 				if (trip) {
 					bs.type = "true"s;
 				}
-				else { 
-					bs.type = "false"s; 
-				}
+				else { bs.type = "false"s; }
 
 				update_requests_bus_.push_back(bs);
 
 			}
 		}
-	
+
 	}
 
 	void InputReaderJson::ReadInputJsonStatRequest() {
-		const auto& json_array_out = ((load_.GetRoot()).AsMap()).at("stat_requests"s);
+		const auto& json_array_out = ((load_.GetRoot()).AsDict()).at("stat_requests"s);
 		for (const auto& file : json_array_out.AsArray()) {
-			const auto& json_obj = file.AsMap();
+			const auto& json_obj = file.AsDict();
 			OutputRequest outputstopjson;
 			if (json_obj.at("type").AsString() == "Map"s) {
 				outputstopjson.id = json_obj.at("id").AsInt();
@@ -121,72 +120,69 @@ namespace transport_catalogue {
 				output_requests_.push_back(outputstopjson);
 			}
 		}
-	
+
 	}
 
 	void InputReaderJson::ReadInputJsonRenderSettings() {
-		const auto& json_array_render = ((load_.GetRoot()).AsMap()).at("render_settings"s);
-		if (json_array_render.AsMap().find("width") != json_array_render.AsMap().end()) {
-			render_data_.width = json_array_render.AsMap().find("width")->second.AsDouble();
+
+		const auto& json_array_render = ((load_.GetRoot()).AsDict()).at("render_settings"s).AsDict();
+		if (json_array_render.find("width") != json_array_render.end()) {
+			render_data_.width = json_array_render.find("width")->second.AsDouble();
 		}
 
-		if (json_array_render.AsMap().find("height") != json_array_render.AsMap().end()) {
-			render_data_.height = json_array_render.AsMap().find("height")->second.AsDouble();
+		if (json_array_render.find("height") != json_array_render.end()) {
+			render_data_.height = json_array_render.find("height")->second.AsDouble();
 		}
 
-		if (json_array_render.AsMap().find("padding") != json_array_render.AsMap().end()) {
-			render_data_.padding = json_array_render.AsMap().find("padding")->second.AsDouble();
+		if (json_array_render.find("padding") != json_array_render.end()) {
+			render_data_.padding = json_array_render.find("padding")->second.AsDouble();
 		}
 
-		if (json_array_render.AsMap().find("line_width") != json_array_render.AsMap().end()) {
-			render_data_.line_width = json_array_render.AsMap().find("line_width")->second.AsDouble();
+		if (json_array_render.find("line_width") != json_array_render.end()) {
+			render_data_.line_width = json_array_render.find("line_width")->second.AsDouble();
 		}
 
-		if (json_array_render.AsMap().find("stop_radius") != json_array_render.AsMap().end()) {
-			render_data_.stop_radius = json_array_render.AsMap().find("stop_radius")->second.AsDouble();
+		if (json_array_render.find("stop_radius") != json_array_render.end()) {
+			render_data_.stop_radius = json_array_render.find("stop_radius")->second.AsDouble();
 		}
 
-		if (json_array_render.AsMap().find("bus_label_font_size") != json_array_render.AsMap().end()) {
-			render_data_.bus_label_font_size = json_array_render.AsMap().find("bus_label_font_size")->second.AsDouble();
+		if (json_array_render.find("bus_label_font_size") != json_array_render.end()) {
+			render_data_.bus_label_font_size = json_array_render.find("bus_label_font_size")->second.AsDouble();
 		}
 
-		if (json_array_render.AsMap().find("bus_label_offset") != json_array_render.AsMap().end()) {
+		if (json_array_render.find("bus_label_offset") != json_array_render.end()) {
 
-			for (auto el : json_array_render.AsMap().find("bus_label_offset")->second.AsArray()) { 
-				render_data_.bus_label_offset.push_back(el.AsDouble()); 
-			}
+			for (auto el : json_array_render.find("bus_label_offset")->second.AsArray()) { render_data_.bus_label_offset.push_back(el.AsDouble()); }
 		}
 
-		if (json_array_render.AsMap().find("stop_label_offset") != json_array_render.AsMap().end()) {
+		if (json_array_render.find("stop_label_offset") != json_array_render.end()) {
 
-			for (auto el : json_array_render.AsMap().find("stop_label_offset")->second.AsArray()) { 
-				render_data_.stop_label_offset.push_back(el.AsDouble()); 
-			}
+			for (auto el : json_array_render.find("stop_label_offset")->second.AsArray()) { render_data_.stop_label_offset.push_back(el.AsDouble()); }
 		}
 
 
-		if (json_array_render.AsMap().find("stop_label_font_size") != json_array_render.AsMap().end()) {
-			render_data_.stop_label_font_size = json_array_render.AsMap().find("stop_label_font_size")->second.AsDouble();
+		if (json_array_render.find("stop_label_font_size") != json_array_render.end()) {
+			render_data_.stop_label_font_size = json_array_render.find("stop_label_font_size")->second.AsDouble();
 		}
 
-		if (json_array_render.AsMap().find("underlayer_color") != json_array_render.AsMap().end()) {
+		if (json_array_render.find("underlayer_color") != json_array_render.end()) {
 
-			render_data_.underlayer_color.push_back(GetColor(json_array_render.AsMap().find("underlayer_color")->second));
+			render_data_.underlayer_color.push_back(GetColor(json_array_render.find("underlayer_color")->second));
 		}
 
-		if (json_array_render.AsMap().find("underlayer_width") != json_array_render.AsMap().end()) {
-			render_data_.underlayer_width = json_array_render.AsMap().find("underlayer_width")->second.AsDouble();
+		if (json_array_render.find("underlayer_width") != json_array_render.end()) {
+			render_data_.underlayer_width = json_array_render.find("underlayer_width")->second.AsDouble();
 		}
 
-		if (json_array_render.AsMap().find("color_palette") != json_array_render.AsMap().end()) {
-			for (auto el : json_array_render.AsMap().find("color_palette")->second.AsArray()) {
+		if (json_array_render.find("color_palette") != json_array_render.end()) {
+			for (auto el : json_array_render.find("color_palette")->second.AsArray()) {
+
 				render_data_.color_palette.push_back(GetColor(el));
 			}
 
 		}
 
 	}
-
 
 	void InputReaderJson::ReadInputJsonRequest() {
 		ReadInputJsonBaseRequest();
@@ -196,19 +192,19 @@ namespace transport_catalogue {
 
 
 	void InputReaderJson::UpdStop(TransportCatalogue& tc) {
-		for (int i = 0; i < update_requests_stop_.size(); ++i) {
+		for (int i = 0; i < static_cast<int>(update_requests_stop_.size()); ++i) {
 			tc.AddStop(update_requests_stop_[i]);
 		}
 	}
 
 	void InputReaderJson::UpdStopDist(TransportCatalogue& tc) {
-		for (int i = 0; i < distances_.size(); ++i) {
+		for (int i = 0; i < static_cast<int>(distances_.size()); ++i) {
 			tc.AddStopDistance(distances_[i]);
 		}
 	}
 
 	void InputReaderJson::UpdBus(TransportCatalogue& tc) {
-		for (int i = 0; i < update_requests_bus_.size(); ++i) {
+		for (int i = 0; i < static_cast<int>(update_requests_bus_.size()); ++i) {
 			tc.AddBus(update_requests_bus_[i]);
 		}
 	}
@@ -216,29 +212,33 @@ namespace transport_catalogue {
 	void InputReaderJson::ManageOutputRequests(TransportCatalogue& tc, MapRenderer& mr) {
 		std::ostream& out = std::cout;
 		json::Array queries;
-		for (auto el : output_requests_) {
+		for (const auto& el : output_requests_) {
 			if (el.type == "Bus"s) {
 
 				const Bus* bus_resp = tc.FindBus(el.name);
 				if (bus_resp == nullptr) {
-					json::Node answer_empty_bus = json::Dict{
 
-							{"error_message"s , "not found"s},
-							{"request_id", el.id}
-					};
+
+					json::Node answer_empty_bus = json::Builder{}
+						.StartDict().Key("error_message").Value("not found"s)
+						.Key("request_id").Value(el.id).EndDict().Build();
+
 					queries.emplace_back(answer_empty_bus);
 
 				}
 
 				else {
 					AllBusInfoBusResponse r = tc.GetAllBusInfo(el.name);
-					json::Node non_empty_bus = json::Dict{
-							{"curvature", r.route_curvature},
-							{"request_id" , el.id},
-							{"route_length" , r.route_length},
-							{"stop_count" , r.quant_stops},
-							{"unique_stop_count" , r.quant_uniq_stops}
-					};
+
+					json::Node non_empty_bus = json::Builder{}
+						.StartDict()
+						.Key("curvature").Value(r.route_curvature)
+						.Key("request_id").Value(el.id)
+						.Key("route_length").Value(r.route_length)
+						.Key("stop_count").Value(r.quant_stops)
+						.Key("unique_stop_count").Value(r.quant_uniq_stops)
+						.EndDict().Build();
+
 					queries.emplace_back(non_empty_bus);
 				}
 			}
@@ -246,11 +246,13 @@ namespace transport_catalogue {
 			if (el.type == "Stop"s) {
 				const Stop* myStop = tc.FindStop(el.name);
 				if (myStop == nullptr) {
-					json::Node answer_empty_stop = json::Dict{
 
-							{"error_message"s , "not found"s},
-							{"request_id", el.id}
-					};
+					json::Node answer_empty_stop = json::Builder{}
+						.StartDict()
+						.Key("error_message").Value("not found"s)
+						.Key("request_id").Value(el.id)
+						.EndDict().Build();
+
 					queries.emplace_back(answer_empty_stop);
 
 				}
@@ -258,28 +260,27 @@ namespace transport_catalogue {
 					set<string> r = tc.GetStopInfo(el.name);
 					json::Array routes;
 					std::copy(r.begin(), r.end(), std::back_inserter(routes));
-					json::Node answer_stop = json::Dict{
-						{"buses", routes},
-						{"request_id" ,  el.id}
 
-					};
+					json::Node answer_stop = json::Builder{}
+						.StartDict()
+						.Key("buses").Value(routes)
+						.Key("request_id").Value(el.id)
+						.EndDict().Build();
+
 					queries.emplace_back(answer_stop);
-
-
 				}
 			}
 			if (el.type == "Map"s) {
 
 				string map_str = mr.DrawRouteGetDoc(tc);
 
-				json::Node answer_empty_map = json::Dict{
+				json::Node answer_empty_map = json::Builder{}
+					.StartDict()
+					.Key("map").Value(map_str)
+					.Key("request_id").Value(el.id)
+					.EndDict().Build();
 
-						{"map"s , map_str},
-						{"request_id", el.id}
-				};
 				queries.emplace_back(answer_empty_map);
-
-
 			}
 
 		}

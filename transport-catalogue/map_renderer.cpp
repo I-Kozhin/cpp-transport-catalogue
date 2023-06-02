@@ -55,12 +55,12 @@ bool IsZero(double value) {
  * @param color_palette The color palette to choose from.
  * @return A map associating each bus route name with its corresponding color.
  */
-std::map<string, Color> GetColorForRoute(const std::deque<Bus>& buses, std::vector<Color> color_palette) {
+std::map<string, Color> GetColorForRoute(const std::deque<Bus>& buses, const std::vector<Color> color_palette) {
     std::map<string, Color> result;
     int index_color = 0;
     for (const auto& bus : buses) {
         if (bus.stops.size() != 0) {
-            if (index_color > color_palette.size() - 1) { index_color = 0; }
+            if (index_color > static_cast<int>(color_palette.size()) - 1) { index_color = 0; }
 
             result[bus.bus_name] = color_palette[index_color];
             ++index_color;
@@ -95,7 +95,7 @@ deque<string_view> GetStopsForNonRounTtip(deque<string_view> stops) {
  * @param buses The deque of buses.
  * @return The vector of all coordinates for the given buses.
  */
-vector<geo::Coordinates> GetAllCoordinates(const TransportCatalogue& rtotc, const std::deque<Bus> buses) {
+vector<geo::Coordinates> GetAllCoordinates(const TransportCatalogue& rtotc, const std::deque<Bus>& buses) {
     vector<geo::Coordinates> geo_coords;
     for (const auto& bus : buses) {
         std::deque<std::string_view> current_stops;
@@ -103,7 +103,7 @@ vector<geo::Coordinates> GetAllCoordinates(const TransportCatalogue& rtotc, cons
             current_stops = GetStopsForNonRounTtip(bus.stops);
         }
         else { current_stops = bus.stops; }
-        for (int i = 0; i < current_stops.size(); i++) {
+        for (int i = 0; i < static_cast<int>(current_stops.size()); i++) {
             const Stop* one = rtotc.FindStop(current_stops[i]);
             geo_coords.push_back(one->coordinates);
         }
@@ -131,7 +131,7 @@ bool  CheckSameStations(const deque<string_view>& current_stops) {
  * @brief Constructs a MapRenderer object with the given RenderData.
  * @param render_data The RenderData object containing rendering settings.
  */
-MapRenderer::MapRenderer(RenderData& render_data)
+MapRenderer::MapRenderer(const RenderData& render_data)
     :map_render_data_(render_data)
 {
    
@@ -183,8 +183,8 @@ void MapRenderer::DrawRoutes(const transport_catalogue::TransportCatalogue& tc, 
         else {
             current_stops = bus.stops;
         }
-
-        for (int i = 0; i < current_stops.size(); i++) {
+                
+        for (int i = 0; i < static_cast<int>(current_stops.size()); i++) {
             const Stop* one = tc.FindStop(current_stops[i]);
             const svg::Point screen_coord = proj_one(one->coordinates);
             svg::Point p;
@@ -241,6 +241,7 @@ void MapRenderer::DrawStops(const TransportCatalogue& tc, const SphereProjector&
     const std::set<std::string>& stops_for_route, std::vector<svg::Text>& stops_names,
     std::vector<svg::Circle>& stops_circles) {
     for (auto i = stops_for_route.begin(); i != stops_for_route.end(); ++i) {
+
         Circle c;
         const Stop* one = tc.FindStop(*i);
         const svg::Point screen_coord = proj_one(one->coordinates);
@@ -306,21 +307,21 @@ std::string MapRenderer::DrawRouteGetDoc(const TransportCatalogue& tc) {
 
     // Создание SVG-документа
     svg::Document  doc;
-    for (const auto& polyline : routes_vec) {
+    for (auto&& polyline : routes_vec) {
         doc.Add(std::move(polyline));
     }
 
-    for (const auto& text : routes_text) {
+    for (auto&& text : routes_text) {
         doc.Add(std::move(text));
     }
 
 
 
-    for (const auto& c : stops_circles) {
+    for (auto&& c : stops_circles) {
         doc.Add(std::move(c));
     }
 
-    for (const auto& stop : stops_names) {
+    for (auto&& stop : stops_names) {
         doc.Add(std::move(stop));
     }
 

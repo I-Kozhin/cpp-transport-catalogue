@@ -1,17 +1,15 @@
 #pragma once
 
 /**
-*@file json.h
-*@brief This file contains the declaration of the JSON library, including classes for parsing and working with JSON data.
-*/
+ *@file json.h
+ *@brief This file contains the declaration of the JSON library, including classes for parsing and working with JSON data.
+ */
 
 #include <iostream>
 #include <map>
 #include <string>
-#include <vector>
 #include <variant>
-#include <algorithm>
-#include <sstream>
+#include <vector>
 
 namespace json {
 
@@ -20,210 +18,277 @@ namespace json {
     using Array = std::vector<Node>;
 
     /**
-    * @class ParsingError
-    * @brief Custom exception class for JSON parsing errors.
-    */
+     * @class ParsingError
+     * @brief Custom exception class for JSON parsing errors.
+     */
     class ParsingError : public std::runtime_error {
         public:
             using runtime_error::runtime_error;
     };
 
     /**
-    * @class Node
-    * @brief Class representing a JSON node.
-    */
-    class Node {
+     * @class Node
+     * @brief Represents a JSON node, which can hold various types of values.
+     */
+    class Node final
+        : private std::variant<std::nullptr_t, Array, Dict, bool, int, double, std::string> {
         public:
+            using variant::variant;
+            using Value = variant;
 
-            using Value = std::variant<std::nullptr_t, Array, Dict, bool, int, double, std::string>;
+            /**
+             * @brief Checks if the node holds an integer value.
+             * @return True if the node holds an integer value, false otherwise.
+             */
+            bool IsInt() const {
+                return std::holds_alternative<int>(*this);
+            }
 
+            /**
+             * @brief Retrieves the integer value held by the node.
+             * @note Throws a logic_error if the node does not hold an integer value.
+             * @return The integer value.
+             */
+            int AsInt() const {
+                using namespace std::literals;
+                if (!IsInt()) {
+                    throw std::logic_error("Not an int"s);
+                }
+                return std::get<int>(*this);
+            }
 
-            Node() = default;     
-            Node(const Array& array);
-            Node(Array&& array);
-            Node(const Dict& map);
-            Node(Dict&& map);
-            Node(int value);
-            Node(std::string value);
-            Node(bool bul);
-            Node(double doub);
-            Node(std::nullptr_t);
+            /**
+             * @brief Checks if the node holds a pure double value (not derived from an integer).
+             * @return True if the node holds a pure double value, false otherwise.
+             */
+            bool IsPureDouble() const {
+                return std::holds_alternative<double>(*this);
+            }
+
+            /**
+             * @brief Checks if the node holds a double value (may be derived from an integer).
+             * @return True if the node holds a double value, false otherwise.
+             */
+            bool IsDouble() const {
+                return IsInt() || IsPureDouble();
+            }
             
-
-            const Value& GetValue() const { return value_; }
-
-            const Array& AsArray() const;
-            const Dict& AsMap() const;
-            int AsInt() const;
-            const std::string& AsString() const;
-            double AsDouble() const;
-            bool AsBool() const;
-
-            bool IsInt() const;
-            bool IsDouble() const;
-            bool IsPureDouble() const;
-            bool IsBool() const;
-            bool IsString() const;
-            bool IsNull() const;
-            bool IsArray() const;
-            bool IsMap() const;
-
-            bool operator==(const Node& node) const {
-                return value_ == node.value_;
+            /**
+             * @brief Retrieves the double value held by the node.
+             * @note Throws a logic_error if the node does not hold a double value.
+             * @return The double value.
+             */
+            double AsDouble() const {
+                using namespace std::literals;
+                if (!IsDouble()) {
+                    throw std::logic_error("Not a double"s);
+                }
+                return IsPureDouble() ? std::get<double>(*this) : AsInt();
             }
 
-            bool operator!=(const Node& node) const {
-                return value_ != node.value_;
+            /**
+             * @brief Checks if the node holds a boolean value.
+             * @return True if the node holds a boolean value, false otherwise.
+             */
+            bool IsBool() const {
+                return std::holds_alternative<bool>(*this);
             }
 
-        private:
-            Value value_;
+            /**
+             * @brief Retrieves the boolean value held by the node.
+             * @note Throws a logic_error if the node does not hold a boolean value.
+             * @return The boolean value.
+             */
+            bool AsBool() const {
+                using namespace std::literals;
+                if (!IsBool()) {
+                    throw std::logic_error("Not a bool"s);
+                }
+
+                return std::get<bool>(*this);
+            }
+
+            /**
+             * @brief Checks if the node is null.
+             * @return True if the node is null, false otherwise.
+             */
+            bool IsNull() const {
+                return std::holds_alternative<std::nullptr_t>(*this);
+            }
+
+            /**
+             * @brief Checks if the node holds an array value.
+             * @return True if the node holds an array value, false otherwise.
+             */
+            bool IsArray() const {
+                return std::holds_alternative<Array>(*this);
+            }
+
+            /**
+             * @brief Retrieves the array value held by the node.
+             * @note Throws a logic_error if the node does not hold an array value.
+             * @return The array value.
+             */
+            const Array& AsArray() const {
+                using namespace std::literals;
+                if (!IsArray()) {
+                    throw std::logic_error("Not an array"s);
+                }
+
+                return std::get<Array>(*this);
+            }
+
+            /**
+             * @brief Retrieves the array value held by the node (non-const version).
+             * @note Throws a logic_error if the node does not hold an array value.
+             * @return The array value.
+             */
+            Array& AsArray() {
+                using namespace std::literals;
+                if (!IsArray()) {
+                    throw std::logic_error("Not an array"s);
+                }
+
+                return std::get<Array>(*this);
+            }
+
+            /**
+             * @brief Checks if the node holds a string value.
+             * @return True if the node holds a string value, false otherwise.
+             */
+            bool IsString() const {
+                return std::holds_alternative<std::string>(*this);
+            }
+
+            /**
+             * @brief Retrieves the string value held by the node.
+             * @note Throws a logic_error if the node does not hold a string value.
+             * @return The string value.
+             */
+            const std::string& AsString() const {
+                using namespace std::literals;
+                if (!IsString()) {
+                    throw std::logic_error("Not a string"s);
+                }
+
+                return std::get<std::string>(*this);
+            }
+
+            /**
+             * @brief Checks if the node holds a dictionary (object) value.
+             * @return True if the node holds a dictionary value, false otherwise.
+             */
+            bool IsDict() const {
+                return std::holds_alternative<Dict>(*this);
+            }
+
+            /**
+             * @brief Retrieves the dictionary (object) value held by the node.
+             * @note Throws a logic_error if the node does not hold a dictionary value.
+             * @return The dictionary value.
+             */
+            const Dict& AsDict() const {
+                using namespace std::literals;
+                if (!IsDict()) {
+                    throw std::logic_error("Not a dict"s);
+                }
+
+                return std::get<Dict>(*this);
+            }
+
+            /**
+             * @brief Retrieves the dictionary (object) value held by the node (non-const version).
+             * @note Throws a logic_error if the node does not hold a dictionary value.
+             * @return The dictionary value.
+             */
+            Dict& AsDict() {
+                using namespace std::literals;
+                if (!IsDict()) {
+                    throw std::logic_error("Not a dict"s);
+                }
+
+                return std::get<Dict>(*this);
+            }
+
+            /**
+             * @brief Checks if two nodes are equal.
+             * @param rhs The node to compare with.
+             * @return True if the nodes are equal, false otherwise.
+             */
+            bool operator==(const Node& rhs) const {
+                return GetValue() == rhs.GetValue();
+            }
+
+            /**
+             * @brief Retrieves the underlying value of the node.
+             * @return The value of the node.
+             */
+            const Value& GetValue() const {
+                return *this;
+            }
     };
 
     /**
-    * @class Document
-    * @brief Class representing a JSON document.
-    */
+     * @brief Checks if two Node objects are not equal.
+     * @param lhs The left-hand side Node.
+     * @param rhs The right-hand side Node.
+     * @return True if the nodes are not equal, false otherwise.
+     */
+    inline bool operator!=(const Node& lhs, const Node& rhs) {
+        return !(lhs == rhs);
+    }
+
+    /**
+     * @class Document
+     * @brief Represents a JSON document.
+     */
     class Document {
         public:
-            explicit Document(Node root);
-
-            const Node& GetRoot() const;
-
-            bool operator==(const Document& lhs) const {
-                return root_ == lhs.root_;
+            explicit Document(Node root)
+                : root_(std::move(root)) {
             }
 
-            bool operator!=(const Document& lhs) const {
-                return !(root_ == lhs.root_);
+            const Node& GetRoot() const {
+                return root_;
             }
 
         private:
             Node root_;
     };
 
+    /**
+     * @brief Checks if two Document objects are equal.
+     * @param lhs The left-hand side Document.
+     * @param rhs The right-hand side Document.
+     * @return True if the documents are equal, false otherwise.
+     */
+    inline bool operator==(const Document& lhs, const Document& rhs) {
+        return lhs.GetRoot() == rhs.GetRoot();
+    }
+
+    /**
+     * @brief Checks if two Document objects are not equal.
+     * @param lhs The left-hand side Document.
+     * @param rhs The right-hand side Document.
+     * @return True if the documents are not equal, false otherwise.
+     */
+    inline bool operator!=(const Document& lhs, const Document& rhs) {
+        return !(lhs == rhs);
+    }
+
+    /**
+     * @brief Loads a JSON document from the input stream.
+     * @param input The input stream.
+     * @return The loaded JSON document.
+     * @throws ParsingError if there is an error while parsing the JSON.
+     */
     Document Load(std::istream& input);
 
-    inline void PrintNode(const Node& node, std::ostream& out);
-
-    inline void PrintValue(int value, std::ostream& out) {
-        out << value;
-    }
-
-    inline void PrintValue(double value, std::ostream& out) {
-        out << value;
-    }
-
-    inline void PrintValue(std::nullptr_t, std::ostream& out) {
-        out << "null";
-    }
-
-
-    inline void PrintValue(const std::string& value, std::ostream& out) {
-        //  \n, \r, \", \t, \\.
-        using namespace std::literals;
-        out << '"';
-        for (const char c : value) {
-            switch (c) {
-            case '"':
-                out << "\\\""sv;
-                break;
-            case '\n':
-                out << "\\n"sv;
-                break;
-            case '\t':
-                out << "\t"sv;
-                break;
-            case '\r':
-                out << "\\r"sv;
-                break;
-            case '\\':
-                out << "\\\\"sv;
-                break;
-            default:
-                out << c;
-                break;
-            }
-        }
-        out << '"';
-    }
-
-    inline void PrintValue(bool bul, std::ostream& out) {
-        if (bul) out << "true";
-        else out << "false";
-    }
-
     /**
-    * @brief Prints an array value to the output stream.
-    * @param array The array value to print.
-    * @param out The output stream.
-    */
-    inline void PrintValue(const Array& array, std::ostream& out) {
-        out << "[" << std::endl;
-        for (auto node = array.begin(); node != array.end(); node++) {
-            if (node + 1 == array.end()) {
-                PrintNode((*node), out);
-                out << std::endl;
-            }
-            else {
-                PrintNode((*node), out);
-                out << ", " << std::endl;
-            }
-        }
-        out << "]";
-    }
-
-    /**
-    * @brief Prints a map value to the output stream.
-    * @param map The map value to print.
-    * @param out The output stream.
-    */
-    inline void PrintValue(const Dict& map, std::ostream& out) {
-        out << "{" << std::endl;
-        for (auto i = map.begin(); i != map.end(); i++) {
-            auto temp = i;
-            if (++temp == map.end()) {
-                PrintValue(i->first, out);
-                out << ": ";
-                PrintNode(i->second, out);
-                out << std::endl;
-            }
-            else {
-                PrintValue(i->first, out);
-                out << ": ";
-                PrintNode(i->second, out);
-                out << ", " << std::endl;
-            }
-        }
-        out << "}";
-    }
-
-    /**
-    * @brief Prints a JSON node to the output stream.
-    * @param node The JSON node to print.
-    * @param out The output stream.
-    */
-    inline void PrintNode(const Node& node, std::ostream& out) {
-        std::visit(
-            [&out](const auto& value) { PrintValue(value, out); },
-            node.GetValue());
-    }
-
-    /**
-    * @brief Prints a JSON document to the output stream.
-    * @param doc The JSON document to print.
-    * @param output The output stream.
-    */
+     * @brief Prints a JSON document to the output stream.
+     * @param doc The JSON document to print.
+     * @param output The output stream.
+     */
     void Print(const Document& doc, std::ostream& output);
-
-    /**
-    * @brief Loads a JSON document from a string.
-    * @param s The string containing the JSON document.
-    * @return The loaded JSON document.
-    */
-    inline json::Document LoadJSON(const std::string& s) {
-        std::istringstream strm(s);
-        return json::Load(strm);
-    }
 
 }  // namespace json

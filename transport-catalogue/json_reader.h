@@ -16,6 +16,7 @@
 #include "json.h"
 #include "geo.h"
 #include "map_renderer.h"
+#include "json_builder.h"
 
 
 
@@ -53,21 +54,21 @@ namespace transport_catalogue {
             void ReadInputJsonRequest();
 
             /**
-            * @brief Updates the stops in the transport catalogue.
-            * @param tc The transport catalogue to update.
-            */
+             * @brief Updates the stops in the transport catalogue.
+             * @param tc The transport catalogue to update.
+             */
             void UpdStop(TransportCatalogue& tc);
 
             /**
-            * @brief Updates the buses in the transport catalogue.
-            * @param tc The transport catalogue to update.
-            */
+             * @brief Updates the buses in the transport catalogue.
+             * @param tc The transport catalogue to update.
+             */
             void UpdBus(TransportCatalogue& tc);
 
             /**
-            * @brief Updates the stop distances in the transport catalogue.
-            * @param tc The transport catalogue to update.
-            */
+             * @brief Updates the stop distances in the transport catalogue.
+             * @param tc The transport catalogue to update.
+             */
             void UpdStopDist(TransportCatalogue& tc);
 
             /**
@@ -84,7 +85,7 @@ namespace transport_catalogue {
         private:
 
             std::istream& input_stream_;
-            std::deque<domain::OutputRequest> output_requests_;
+            std::deque<OutputRequest> output_requests_;
             std::deque<domain::BusDescription> update_requests_bus_;
             std::deque<domain::Stop> update_requests_stop_;
             std::vector<domain::StopDistancesDescription> distances_;   ///< The stop distances.

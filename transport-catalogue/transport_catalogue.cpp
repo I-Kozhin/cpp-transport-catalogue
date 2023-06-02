@@ -99,7 +99,7 @@ namespace transport_catalogue {
 					bus_info.quant_stops = stops_v.size();
 					unordered_set<string_view> unique_stops(stops_v.begin(), stops_v.end());
 					bus_info.quant_uniq_stops = unique_stops.size();
-					for (int i = 0; i < stops_v.size() - 1; i++) {
+					for (int i = 0; i < static_cast<int>(stops_v.size()) - 1; i++) {
 						const Stop* one = FindStop(stops_v[i]);
 						const Stop* two = FindStop(stops_v[i + 1]);
 						coord_length += geo::ComputeDistance(one->coordinates, two->coordinates);
@@ -110,7 +110,7 @@ namespace transport_catalogue {
 					bus_info.quant_stops = stops_v.size() * 2 - 1;
 					unordered_set<string_view> unique_stops(stops_v.begin(), stops_v.end());
 					bus_info.quant_uniq_stops = unique_stops.size();
-					for (int i = 0; i < stops_v.size() - 1; i++) {
+					for (int i = 0; i < static_cast<int>(stops_v.size()) - 1; i++) {
 						const Stop* one = FindStop(stops_v[i]);
 						const Stop* two = FindStop(stops_v[i + 1]);
 						coord_length += geo::ComputeDistance(one->coordinates, two->coordinates);

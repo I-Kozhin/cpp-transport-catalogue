@@ -12,6 +12,7 @@
 #include "svg.h"
 #include "json.h"
 
+class MapRenderer; // Добавленное объявление класса MapRenderer
 
 /**
  * @struct Renderdata
@@ -137,7 +138,7 @@ class MapRenderer {
          * @brief Constructs a MapRenderer object.
          * @param render_data The rendering data for the map.
          */
-        MapRenderer(RenderData& render_data);
+        explicit MapRenderer(const RenderData& render_data);
 
         /**
          * @brief Draws the routes on the map and returns the SVG document as a string.
@@ -154,14 +155,13 @@ class MapRenderer {
         void Render(svg::Document map_, std::ostream& out);
 
     private:
-        RenderData& map_render_data_;
+        const RenderData& map_render_data_;
 
         std::deque<domain::Bus> GetSortedBuses(const transport_catalogue::TransportCatalogue& tc);
 
         void DrawRoutes(const transport_catalogue::TransportCatalogue& tc, std::deque<domain::Bus>& buses, const SphereProjector& proj_one,
     std::map<std::string, svg::Color>& colors, std::vector<svg::Text>& routes_text, std::vector<svg::Polyline>& routes_vec);
 
-    //const std::set<std::string>& stops_for_route под вопросом
         void DrawStops(const transport_catalogue::TransportCatalogue& tc, const SphereProjector& proj_one,
     const std::set<std::string>& stops_for_route, std::vector<svg::Text>& stops_names,
     std::vector<svg::Circle>& stops_circles);
