@@ -11,6 +11,7 @@
 #include "geo.h"
 #include "svg.h"
 #include "json.h"
+#include <algorithm>
 
 class MapRenderer; // Добавленное объявление класса MapRenderer
 
@@ -147,12 +148,12 @@ class MapRenderer {
          */
         std::string DrawRouteGetDoc(const transport_catalogue::TransportCatalogue& tc);
 
-        /**
-         * @brief Renders the map using the specified SVG document and outputs it to the given output stream.
-         * @param map_ The SVG document representing the map.
-         * @param out The output stream to write the rendered map to.
-         */
-        void Render(svg::Document map_, std::ostream& out);
+        // /**
+        //  * @brief Renders the map using the specified SVG document and outputs it to the given output stream.
+        //  * @param map_ The SVG document representing the map.
+        //  * @param out The output stream to write the rendered map to.
+        //  */
+        // void Render(svg::Document map_, std::ostream& out);
 
     private:
         const RenderData& map_render_data_;
