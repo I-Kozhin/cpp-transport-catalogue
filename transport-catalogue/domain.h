@@ -14,17 +14,6 @@
 namespace domain {
 
 	/**
-     * @struct OutputRequest
-     *
-     * @brief Struct representing an output request with an ID, type, and name.
-     */
-	struct OutputRequest {
-		int id;
-		std::string type;
-		std::string name;
-	};
-
-	/**
      * @struct StopDistancesDescription
      *
      * @brief Struct representing a stop distances description with a stop name and distances to other stops.

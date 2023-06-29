@@ -10,16 +10,10 @@ using namespace transport_catalogue;
 using namespace std;
 #include <chrono>
 
+#include "transport_router.h"
+
 
 int main() {
-#ifdef _DEBUG
-	if (freopen("input.txt.txt", "r", stdin) == nullptr) {
-		puts("can't open input.txt.txt");
-		return 1;
-	}
-#endif 
-	
-	
 	transport_catalogue::TransportCatalogue tc;
 	transport_catalogue::InputReaderJson reader(std::cin);
 	(void)reader.ReadInputJsonRequest();
@@ -27,29 +21,13 @@ int main() {
 	reader.UpdStop(tc);
 	reader.UpdBus(tc);
 	reader.UpdStopDist(tc);
+	reader.UpdRouteSettings(tc);
 	RenderData rd = reader.GetRenderData();
 	MapRenderer mapdrawer(rd);
-	
+
 	graph::ActivityProcessor activityprocessor(tc);
 
 	reader.ManageOutputRequests(tc, mapdrawer, activityprocessor);
-	
-	/*
-	transport_catalogue::TransportCatalogue tc;
-	transport_catalogue::InputReaderJson reader(std::cin);
-	(void)reader.ReadInputJsonRequest();
-	reader.UpdStop(tc);
-	reader.UpdBus(tc);
-	reader.UpdStopDist(tc);
-	RenderData rd = reader.GetRenderData();
-	MapRenderer mapdrawer(rd);
-	RequestHandler reqhandleq(tc, mapdrawer);
-	//reqhandleq.RenderMap();
-	reqhandleq.RenderMapByString();
-	
-	*/
 
 	return 0;
-
-
 }
