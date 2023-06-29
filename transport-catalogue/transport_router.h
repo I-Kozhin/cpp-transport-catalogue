@@ -1,7 +1,7 @@
 #pragma once
 /**
  * @file transport_router.h
- * @brief This file contains the declaration of the ActivityProcessor class and related structs.
+ * @brief This file contains the declaration of the TransportRouter class and related structs.
 */
 #include "router.h"
 #include "transport_catalogue.h"
@@ -33,23 +33,23 @@ namespace graph {
      * @struct DestinatioInfo
      * @brief Struct representing the destination information, including the route and total time.
      */
-    struct DestinatioInfo {
+    struct DestinationInfo {
         std::vector<std::variant<BusActivity, WaitingActivity>> route; /**< The route with bus activities and waiting activities */
         double all_time = 0.0; /**< The total time of the destination */
     };
 
     /**
-     * @class ActivityProcessor
+     * @class TransportRouter
      * @brief Class responsible for processing activities and finding routes between stops.
      */
-	class ActivityProcessor {
+	class TransportRouter {
 
         public:
             /**
-             * @brief Constructor for the ActivityProcessor class.
+             * @brief Constructor for the TransportRouter class.
              * @param tc The transport catalogue containing bus and stop information.
              */
-            ActivityProcessor(transport_catalogue::TransportCatalogue& tc);
+            TransportRouter(transport_catalogue::TransportCatalogue& tc);
 
             /**
              * @brief Adds knots (vertices) to the graph based on the bus routes.
@@ -60,9 +60,9 @@ namespace graph {
              * @brief Finds the route and buses between two stops.
              * @param stop_name_from The name of the starting stop.
              * @param stop_name_to The name of the destination stop.
-             * @return An optional DestinatioInfo struct containing the route and total time, or std::nullopt if the route is not found.
+             * @return An optional DestinationInfo struct containing the route and total time, or std::nullopt if the route is not found.
              */
-            std::optional<DestinatioInfo> GetRouteAndBuses(std::string_view stop_name_from, std::string_view stop_name_to);
+            std::optional<DestinationInfo> GetRouteAndBuses(std::string_view stop_name_from, std::string_view stop_name_to);
 
         private:
             transport_catalogue::TransportCatalogue& tc; /**< The transport catalogue */

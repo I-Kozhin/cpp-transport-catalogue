@@ -1,7 +1,7 @@
 /**
  * @file transport_router.cpp
  *
- * @brief This file contains the implementation of the ActivityProcessor class for route calculation and related functions.
+ * @brief This file contains the implementation of the TransportRouter class for route calculation and related functions.
  */
 
 #include "transport_router.h"
@@ -9,16 +9,18 @@
 
 namespace graph {
 
+		const double MINUTES_PER_KILOMETER = 1000.0 / 60.0;
+
         /**
-         * @brief Constructs an ActivityProcessor object.
+         * @brief Constructs an TransportRouter object.
          *
-         * This constructor initializes the ActivityProcessor with a reference to the TransportCatalogue.
+         * This constructor initializes the TransportRouter with a reference to the TransportCatalogue.
          * It creates a DirectedWeightedGraph and adds knots based on the stops in the TransportCatalogue.
          * It also creates a Router object for route calculation using the created graph.
          *
          * @param tc The TransportCatalogue reference.
          */
-		ActivityProcessor::ActivityProcessor(transport_catalogue::TransportCatalogue& tc)
+		TransportRouter::TransportRouter(transport_catalogue::TransportCatalogue& tc)
 			: tc(tc) {
 			graph_ = DirectedWeightedGraph<double>(2 * tc.GetStopsQuantity());
 			AddKnots();
@@ -32,7 +34,7 @@ namespace graph {
          * This function iterates through the buses in the TransportCatalogue and adds stops as knots to the graph.
          * It distinguishes between round-trip and non-round-trip buses and adds the stops accordingly.
          */
-		void ActivityProcessor::AddKnots() {
+		void TransportRouter::AddKnots() {
 			const std::deque<domain::Bus>& buses_ = tc.GetBuses();
 
 			for (const domain::Bus& bus : buses_) {
@@ -60,8 +62,8 @@ namespace graph {
          * @param stop_name_to The name of the destination stop.
          * @return An optional DestinationInfo structure with the calculated route and buses, or std::nullopt if the stops are not found.
          */
-		std::optional<DestinatioInfo> ActivityProcessor::GetRouteAndBuses(std::string_view stop_name_from, std::string_view stop_name_to) {
-			DestinatioInfo dest_info;
+		std::optional<DestinationInfo> TransportRouter::GetRouteAndBuses(std::string_view stop_name_from, std::string_view stop_name_to) {
+			DestinationInfo dest_info;
 			std::vector<std::variant<graph::BusActivity, graph::WaitingActivity>> final_route;
 			size_t from;
 			size_t to;
@@ -126,7 +128,7 @@ namespace graph {
          * @param key The stop name.
          * @return An optional size_t value representing the vertex index, or std::nullopt if the key is not found.
          */
-		std::optional<size_t> ActivityProcessor::GetValueByKey(std::string_view key) {
+		std::optional<size_t> TransportRouter::GetValueByKey(std::string_view key) {
 			auto it = stop_to_vertex_.find(key);
 			if (it != stop_to_vertex_.end()) {
 				return it->second;
@@ -144,7 +146,7 @@ namespace graph {
          * @param key The stop name.
          * @return True if the stop exists, False otherwise.
          */
-		bool ActivityProcessor::ChekExistValue(std::string_view key) {
+		bool TransportRouter::ChekExistValue(std::string_view key) {
 			auto it = stop_to_vertex_.find(key);
 			if (it != stop_to_vertex_.end()) {
 				return true;
@@ -163,7 +165,7 @@ namespace graph {
          * @param stops The deque of stop names in the bus route.
          * @param bus_name The name of the bus.
          */
-		void ActivityProcessor::AddStopsOneDirection(const std::deque<std::string_view>& stops, const std::string& bus_name) {
+		void TransportRouter::AddStopsOneDirection(const std::deque<std::string_view>& stops, const std::string& bus_name) {
 
 			for (auto it = stops.begin(); std::next(it) != stops.end(); ++it) {
 				double sum_time = 0;
@@ -198,7 +200,7 @@ namespace graph {
 				const domain::Stop* stop_1 = tc.FindStop(*it);
 				const domain::Stop* stop_1_next = tc.FindStop(*std::next(it));
 				int distance_inner = tc.GetStopDistance(*stop_1, *stop_1_next);
-				double time_inner = distance_inner / (tc.GetVelocity() * 1000 / 60) + sum_time;
+				double time_inner = distance_inner / (tc.GetVelocity() * MINUTES_PER_KILOMETER) + sum_time;
 
 				Edge<double>* edge_mirror = new Edge<double>{ num_vertex_1_wait, num_vertex1_go, tc.GetWaitTime() , std::string(*it), 0 }; 
 				Edge<double>* edge_go_wait = new Edge<double>{ num_vertex1_go, num_vertex_next_wait, time_inner, bus_name, 1 };
@@ -229,7 +231,7 @@ namespace graph {
 					int distance_1_2 = tc.GetStopDistance(*stop_inner, *stop_inner_next);
 
 
-					double time_min_1_2 = distance_1_2 / (tc.GetVelocity() * 1000 / 60) + sum_time;
+					double time_min_1_2 = distance_1_2 / (tc.GetVelocity() * MINUTES_PER_KILOMETER) + sum_time;
 
 					int span_count = std::distance(stops.begin(), std::next(it_inner)) - std::distance(stops.begin(), it);
 
@@ -252,7 +254,7 @@ namespace graph {
          * @param stops The deque of stop names in the bus route.
          * @param bus_name The name of the bus.
          */
-		void ActivityProcessor::AddStopsNonRoundTrip(std::deque<std::string_view> stops, const std::string& bus_name) {  // Тут если передать stops по константной ссылке то ошибка в utility
+		void TransportRouter::AddStopsNonRoundTrip(std::deque<std::string_view> stops, const std::string& bus_name) {  // Тут если передать stops по константной ссылке то ошибка в utility
 			AddStopsOneDirection(stops, bus_name);
 			std::reverse(stops.begin(), stops.end());
 			AddStopsOneDirection(stops, bus_name);

@@ -13,6 +13,8 @@ using namespace std;
 using namespace domain;
 namespace transport_catalogue {
 
+	const double MINUTES_PER_KILOMETER = 1000.0 / 60.0;
+
 	/**
      * @brief Добавляет автобус в транспортный каталог.
 	 * 
@@ -174,7 +176,7 @@ namespace transport_catalogue {
 				Stop* another_stop_ptr = stop_name_to_stop_[el.first];
 				int distance = el.second;
 				stops_distance_.emplace(make_pair(main_stop_ptr, another_stop_ptr), distance);
-				stops_distance_time_.emplace(make_pair(main_stop_ptr, another_stop_ptr), distance/( bus_velocity_*1000 / 60));
+				stops_distance_time_.emplace(make_pair(main_stop_ptr, another_stop_ptr), distance/( bus_velocity_ * MINUTES_PER_KILOMETER));
 			}
 		}
 	}

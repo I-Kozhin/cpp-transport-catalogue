@@ -88,7 +88,7 @@ namespace transport_catalogue {
 			 * 	@param mr The map renderer.
 			 * 	@param actprocess The activity processor.
 			 */
-			void ManageOutputRequests(TransportCatalogue& tc, MapRenderer& mr, graph::ActivityProcessor& actprocess) {
+			void ManageOutputRequests(TransportCatalogue& tc, MapRenderer& mr, graph::TransportRouter& actprocess) {
 				std::ostream& out = std::cout;
 				json::Array queries;
 				for (const auto& el : output_requests_) {
@@ -179,7 +179,7 @@ namespace transport_catalogue {
 
 						if (tc.FindStop(el.from) && tc.FindStop(el.to)) {
 
-							std::optional<graph::DestinatioInfo> route = actprocess.GetRouteAndBuses(el.from, el.to);
+							std::optional<graph::DestinationInfo> route = actprocess.GetRouteAndBuses(el.from, el.to);
 							std::vector<json::Node> array;
 
 							int request_id = el.id;
