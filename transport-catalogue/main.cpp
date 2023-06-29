@@ -25,9 +25,9 @@ int main() {
 	RenderData rd = reader.GetRenderData();
 	MapRenderer mapdrawer(rd);
 
-	graph::ActivityProcessor activityprocessor(tc);
+	graph::TransportRouter transportrouter(tc);
 
-	reader.ManageOutputRequests(tc, mapdrawer, activityprocessor);
+	reader.ManageOutputRequests(tc, mapdrawer, transportrouter);
 
 	return 0;
 }

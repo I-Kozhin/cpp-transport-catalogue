@@ -88,7 +88,7 @@ namespace transport_catalogue {
 			 * 	@param mr The map renderer.
 			 * 	@param actprocess The activity processor.
 			 */
-			void ManageOutputRequests(TransportCatalogue& tc, MapRenderer& mr, graph::ActivityProcessor& actprocess) {
+			void ManageOutputRequests(TransportCatalogue& tc, MapRenderer& mr, graph::TransportRouter& actprocess) {
 				std::ostream& out = std::cout;
 				json::Array queries;
 				for (const auto& el : output_requests_) {

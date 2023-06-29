@@ -1,7 +1,7 @@
 #pragma once
 /**
  * @file transport_router.h
- * @brief This file contains the declaration of the ActivityProcessor class and related structs.
+ * @brief This file contains the declaration of the TransportRouter class and related structs.
 */
 #include "router.h"
 #include "transport_catalogue.h"
@@ -39,17 +39,17 @@ namespace graph {
     };
 
     /**
-     * @class ActivityProcessor
+     * @class TransportRouter
      * @brief Class responsible for processing activities and finding routes between stops.
      */
-	class ActivityProcessor {
+	class TransportRouter {
 
         public:
             /**
-             * @brief Constructor for the ActivityProcessor class.
+             * @brief Constructor for the TransportRouter class.
              * @param tc The transport catalogue containing bus and stop information.
              */
-            ActivityProcessor(transport_catalogue::TransportCatalogue& tc);
+            TransportRouter(transport_catalogue::TransportCatalogue& tc);
 
             /**
              * @brief Adds knots (vertices) to the graph based on the bus routes.
