@@ -104,20 +104,29 @@ namespace transport_catalogue {
 
 	void InputReaderJson::ReadInputJsonStatRequest() {
 		const auto& json_array_out = ((load_.GetRoot()).AsDict()).at("stat_requests"s);
-		for (const auto& file : json_array_out.AsArray()) {
-			const auto& json_obj = file.AsDict();
-			OutputRequest outputstopjson;
-			if (json_obj.at("type").AsString() == "Map"s) {
-				outputstopjson.id = json_obj.at("id").AsInt();
-				outputstopjson.type = json_obj.at("type").AsString();
-				output_requests_.push_back(outputstopjson);
+		if (!json_array_out.IsNull()) {
+			for (const auto& file : json_array_out.AsArray()) {
+				const auto& json_obj = file.AsDict();
+				OutputRequest outputstopjson;
+				if (json_obj.at("type").AsString() == "Map"s) {
+					outputstopjson.id = json_obj.at("id").AsInt();
+					outputstopjson.type = json_obj.at("type").AsString();
+					output_requests_.push_back(outputstopjson);
 
-			}
-			else {
-				outputstopjson.name = json_obj.at("name").AsString();
-				outputstopjson.id = json_obj.at("id").AsInt();
-				outputstopjson.type = json_obj.at("type").AsString();
-				output_requests_.push_back(outputstopjson);
+				} else if (json_obj.at("type").AsString() == "Route"s) {
+					outputstopjson.id = json_obj.at("id").AsInt();
+					outputstopjson.type = json_obj.at("type").AsString();
+					outputstopjson.from = json_obj.at("from").AsString();
+					outputstopjson.to = json_obj.at("to").AsString();
+
+					output_requests_.push_back(outputstopjson);
+				} 
+				else {
+					outputstopjson.name = json_obj.at("name").AsString();
+					outputstopjson.id = json_obj.at("id").AsInt();
+					outputstopjson.type = json_obj.at("type").AsString();
+					output_requests_.push_back(outputstopjson);
+				}
 			}
 		}
 
@@ -184,10 +193,18 @@ namespace transport_catalogue {
 
 	}
 
+	void InputReaderJson::ReadInputJsonRouteSettings() {
+		const auto& json_array_out = ((load_.GetRoot()).AsDict()).at("routing_settings"s);
+		const auto& json_obj = json_array_out.AsDict();
+		route_settings_.bus_velocity = json_obj.at("bus_velocity").AsDouble();
+		route_settings_.bus_wait_time = json_obj.at("bus_wait_time").AsDouble();
+	}
+
 	void InputReaderJson::ReadInputJsonRequest() {
 		ReadInputJsonBaseRequest();
 		ReadInputJsonStatRequest();
 		ReadInputJsonRenderSettings();
+		ReadInputJsonRouteSettings();
 	}
 
 
@@ -209,86 +226,12 @@ namespace transport_catalogue {
 		}
 	}
 
-	void InputReaderJson::ManageOutputRequests(TransportCatalogue& tc, MapRenderer& mr) {
-		std::ostream& out = std::cout;
-		json::Array queries;
-		for (const auto& el : output_requests_) {
-			if (el.type == "Bus"s) {
-
-				const Bus* bus_resp = tc.FindBus(el.name);
-				if (bus_resp == nullptr) {
-
-
-					json::Node answer_empty_bus = json::Builder{}
-						.StartDict().Key("error_message").Value("not found"s)
-						.Key("request_id").Value(el.id).EndDict().Build();
-
-					queries.emplace_back(answer_empty_bus);
-
-				}
-
-				else {
-					AllBusInfoBusResponse r = tc.GetAllBusInfo(el.name);
-
-					json::Node non_empty_bus = json::Builder{}
-						.StartDict()
-						.Key("curvature").Value(r.route_curvature)
-						.Key("request_id").Value(el.id)
-						.Key("route_length").Value(r.route_length)
-						.Key("stop_count").Value(r.quant_stops)
-						.Key("unique_stop_count").Value(r.quant_uniq_stops)
-						.EndDict().Build();
-
-					queries.emplace_back(non_empty_bus);
-				}
-			}
-
-			if (el.type == "Stop"s) {
-				const Stop* myStop = tc.FindStop(el.name);
-				if (myStop == nullptr) {
-
-					json::Node answer_empty_stop = json::Builder{}
-						.StartDict()
-						.Key("error_message").Value("not found"s)
-						.Key("request_id").Value(el.id)
-						.EndDict().Build();
-
-					queries.emplace_back(answer_empty_stop);
-
-				}
-				else {
-					set<string> r = tc.GetStopInfo(el.name);
-					json::Array routes;
-					std::copy(r.begin(), r.end(), std::back_inserter(routes));
-
-					json::Node answer_stop = json::Builder{}
-						.StartDict()
-						.Key("buses").Value(routes)
-						.Key("request_id").Value(el.id)
-						.EndDict().Build();
-
-					queries.emplace_back(answer_stop);
-				}
-			}
-			if (el.type == "Map"s) {
-
-				string map_str = mr.DrawRouteGetDoc(tc);
-
-				json::Node answer_empty_map = json::Builder{}
-					.StartDict()
-					.Key("map").Value(map_str)
-					.Key("request_id").Value(el.id)
-					.EndDict().Build();
-
-				queries.emplace_back(answer_empty_map);
-			}
-
-		}
-		json::Print(json::Document{ queries }, out);
-	}
-
 	RenderData InputReaderJson::GetRenderData() {
 		return render_data_;
+	}
+
+	void InputReaderJson::UpdRouteSettings(TransportCatalogue& tc) {
+		tc.AddRouteSettings(route_settings_);
 	}
 
 }  // namespace transport_catalogue

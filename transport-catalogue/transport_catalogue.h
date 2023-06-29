@@ -20,6 +20,20 @@ namespace transport_catalogue {
 		int id;
 		std::string type;
 		std::string name;
+		std::string from;
+		std::string to;
+	};
+
+	struct StopComparer {
+		bool operator()(const domain::Stop& lhs, const domain::Stop& rhs) const {
+			return lhs.stop_name < rhs.stop_name;
+		}
+	};
+
+	struct StopPointerComparer {
+		bool operator()(const domain::Stop* lhs, const domain::Stop* rhs) const {
+			return lhs->stop_name < rhs->stop_name;
+		}
 	};
 
 	namespace detail {
@@ -141,12 +155,50 @@ namespace transport_catalogue {
          	 */
 			const std::deque<domain::Stop>& GetStops() const;
 
+			/**
+			 * @brief Adds route settings to the transport catalogue.
+			 *
+			 * @param route_settings The RouteSettings structure with route settings.
+			 */
+			void AddRouteSettings(const domain::RouteSettings route_settings);
+
+			/**
+			 * @brief Retrieves the wait time for buses at stops.
+			 *
+			 * @return The wait time for buses at stops.
+			 */
+			double GetWaitTime();
+
+			/**
+			 * @brief Retrieves the distances between stops in the transport catalogue.
+			 *
+			 * @return The map of pairs of stop pointers to distances.
+			 */
+			std::unordered_map<std::pair<const domain::Stop*, const domain::Stop*>, double, detail::PairOfStopPointerUsingString> GetstopsDistanceTime();
+			
+			/**
+			 * @brief Retrieves the velocity of buses.
+			 *
+			 * @return The velocity of buses.
+			 */
+			double GetVelocity();
+
+			/**
+			 * @brief Retrieves the number of stops in the transport catalogue.
+			 *
+			 * @return The number of stops in the transport catalogue.
+			 */
+			size_t GetStopsQuantity();
+
 		private:
+			double bus_wait_time_ = 6;			/**< In minutes */
+			double bus_velocity_ = 40;			/**< In km/h */
 			std::deque<domain::Bus> buses_;		/**< The list of buses */
 			std::deque<domain::Stop> stops_;	/**< The list of stops */
         	std::unordered_map<std::string_view, domain::Stop*> stop_name_to_stop_; /**< The map of stop names to stop pointers */
         	std::unordered_map<std::string_view, domain::Bus*> bus_name_to_bus_; 	/**< The map of bus names to bus pointers */
         	std::unordered_map<std::string_view, std::set<std::string>> stop_info_; /**< The map of stop names to set of bus names */
 			std::unordered_map<std::pair<const domain::Stop*, const domain::Stop*>, int, detail::PairOfStopPointerUsingString> stops_distance_; /**< The map of pairs of stop pointers to distance */
+			std::unordered_map<std::pair<const domain::Stop*, const domain::Stop*>, double, detail::PairOfStopPointerUsingString> stops_distance_time_;
 	};
 }  // namespace transport_catalogue

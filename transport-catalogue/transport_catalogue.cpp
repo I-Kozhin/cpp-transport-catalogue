@@ -7,6 +7,7 @@
 #include "geo.h"
 #include "transport_catalogue.h"
 
+#include <cmath>
 
 using namespace std;
 using namespace domain;
@@ -154,7 +155,9 @@ namespace transport_catalogue {
 		if (stop_info_.count(s)) {
 			return stop_info_.at(s);
 		}
-		else { return res; }
+		else { 
+			return res; 
+		}
 
 	}
 
@@ -171,6 +174,7 @@ namespace transport_catalogue {
 				Stop* another_stop_ptr = stop_name_to_stop_[el.first];
 				int distance = el.second;
 				stops_distance_.emplace(make_pair(main_stop_ptr, another_stop_ptr), distance);
+				stops_distance_time_.emplace(make_pair(main_stop_ptr, another_stop_ptr), distance/( bus_velocity_*1000 / 60));
 			}
 		}
 	}
@@ -193,7 +197,9 @@ namespace transport_catalogue {
 		else if (it2 != stops_distance_.end()) {
 			return stops_distance_.at(make_pair(s2_ptr, s1_ptr));
 		}
-		else { return 0; }
+		else { 
+			return 0; 
+		}
 	}
 
 	/**
@@ -212,6 +218,52 @@ namespace transport_catalogue {
      */
 	const std::deque<Stop>& TransportCatalogue::GetStops() const { 
 		return stops_; 
+	}
+
+	/**
+	 * @brief Adds the route settings to the transport catalogue.
+	 *
+	 * @param route_settings The RouteSettings structure with the route settings.
+	 */
+	void TransportCatalogue::AddRouteSettings(const domain::RouteSettings route_settings) {
+		bus_wait_time_ = route_settings.bus_wait_time;
+		bus_velocity_ = route_settings.bus_velocity;
+	}
+
+	/**
+	 * @brief Gets the wait time at a stop.
+	 * 
+	 * @return The wait time at a stop in minutes.
+	 */
+	double TransportCatalogue::GetWaitTime() { 
+		return bus_wait_time_;  
+	}
+	
+	/**
+	 * @brief Gets the quantity of stops in the transport catalogue.
+	 *
+	 * @return The quantity of stops in the transport catalogue.
+	 */
+	size_t TransportCatalogue::GetStopsQuantity() {
+		return stop_name_to_stop_.size();
+	}
+	
+	/**
+	 * @brief Gets the distances and times between stops.
+	 *
+	 * @return The unordered map with distances and times between stops.
+	 */
+	std::unordered_map<std::pair<const domain::Stop*, const domain::Stop*>, double, detail::PairOfStopPointerUsingString> TransportCatalogue::GetstopsDistanceTime() {
+		return stops_distance_time_;
+	}
+
+	/**
+	 * @brief Gets the bus velocity in km/h.
+	 *
+	 * @return The bus velocity in km/h.
+	 */
+	double TransportCatalogue::GetVelocity() { 
+		return bus_velocity_; 
 	}
 
 }   // namespace transport_catalogue
