@@ -9,6 +9,8 @@
 
 namespace graph {
 
+		const double MINUTES_PER_KILOMETER = 1000.0 / 60.0;
+
         /**
          * @brief Constructs an ActivityProcessor object.
          *
@@ -198,7 +200,7 @@ namespace graph {
 				const domain::Stop* stop_1 = tc.FindStop(*it);
 				const domain::Stop* stop_1_next = tc.FindStop(*std::next(it));
 				int distance_inner = tc.GetStopDistance(*stop_1, *stop_1_next);
-				double time_inner = distance_inner / (tc.GetVelocity() * 1000 / 60) + sum_time;
+				double time_inner = distance_inner / (tc.GetVelocity() * MINUTES_PER_KILOMETER) + sum_time;
 
 				Edge<double>* edge_mirror = new Edge<double>{ num_vertex_1_wait, num_vertex1_go, tc.GetWaitTime() , std::string(*it), 0 }; 
 				Edge<double>* edge_go_wait = new Edge<double>{ num_vertex1_go, num_vertex_next_wait, time_inner, bus_name, 1 };
@@ -229,7 +231,7 @@ namespace graph {
 					int distance_1_2 = tc.GetStopDistance(*stop_inner, *stop_inner_next);
 
 
-					double time_min_1_2 = distance_1_2 / (tc.GetVelocity() * 1000 / 60) + sum_time;
+					double time_min_1_2 = distance_1_2 / (tc.GetVelocity() * MINUTES_PER_KILOMETER) + sum_time;
 
 					int span_count = std::distance(stops.begin(), std::next(it_inner)) - std::distance(stops.begin(), it);
 
