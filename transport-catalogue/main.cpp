@@ -29,9 +29,10 @@ int main() {
 	reader.UpdStopDist(tc);
 	RenderData rd = reader.GetRenderData();
 	MapRenderer mapdrawer(rd);
-	reader.ManageOutputRequests(tc, mapdrawer);
 	
-	
+	graph::ActivityProcessor activityprocessor(tc);
+
+	reader.ManageOutputRequests(tc, mapdrawer, activityprocessor);
 	
 	/*
 	transport_catalogue::TransportCatalogue tc;

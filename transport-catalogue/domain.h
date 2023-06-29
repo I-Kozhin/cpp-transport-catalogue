@@ -81,4 +81,9 @@ namespace domain {
 		std::string type;
 	};
 
+	struct RouteSettings {
+		double bus_velocity;
+		double bus_wait_time;
+
+	};
 }  // namespace domain
