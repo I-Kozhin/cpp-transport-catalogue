@@ -70,6 +70,10 @@ namespace domain {
 		std::string type;
 	};
 
+	/**
+	 * @struct RouteSettings
+	 * @brief Struct representing the settings for route calculation, including bus velocity and bus wait time.
+	 */
 	struct RouteSettings {
 		double bus_velocity;
 		double bus_wait_time;

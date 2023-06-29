@@ -220,25 +220,48 @@ namespace transport_catalogue {
 		return stops_; 
 	}
 
-	// заполнить скорость и время ожидания 
+	/**
+	 * @brief Adds the route settings to the transport catalogue.
+	 *
+	 * @param route_settings The RouteSettings structure with the route settings.
+	 */
 	void TransportCatalogue::AddRouteSettings(const domain::RouteSettings route_settings) {
 		bus_wait_time_ = route_settings.bus_wait_time;
 		bus_velocity_ = route_settings.bus_velocity;
 	}
 
-	// получить время ожидания на остановке
+	/**
+	 * @brief Gets the wait time at a stop.
+	 * 
+	 * @return The wait time at a stop in minutes.
+	 */
 	double TransportCatalogue::GetWaitTime() { 
 		return bus_wait_time_;  
 	}
-
+	
+	/**
+	 * @brief Gets the quantity of stops in the transport catalogue.
+	 *
+	 * @return The quantity of stops in the transport catalogue.
+	 */
 	size_t TransportCatalogue::GetStopsQuantity() {
 		return stop_name_to_stop_.size();
 	}
 	
+	/**
+	 * @brief Gets the distances and times between stops.
+	 *
+	 * @return The unordered map with distances and times between stops.
+	 */
 	std::unordered_map<std::pair<const domain::Stop*, const domain::Stop*>, double, detail::PairOfStopPointerUsingString> TransportCatalogue::GetstopsDistanceTime() {
 		return stops_distance_time_;
 	}
 
+	/**
+	 * @brief Gets the bus velocity in km/h.
+	 *
+	 * @return The bus velocity in km/h.
+	 */
 	double TransportCatalogue::GetVelocity() { 
 		return bus_velocity_; 
 	}

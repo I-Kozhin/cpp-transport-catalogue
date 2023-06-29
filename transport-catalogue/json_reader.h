@@ -78,156 +78,170 @@ namespace transport_catalogue {
              */
             void UpdStopDist(TransportCatalogue& tc);
 
-            /**
-            * @brief Manages the output requests for the transport catalogue and map renderer.
-            * @param tc The transport catalogue.
-            * @param mr The map renderer.
-            */
+
+			/**
+			 * 	@brief Manages the output requests for the transport catalogue and map renderer.
+			 * 	This function handles the output requests specified in the output_requests_ queue.
+			 * 	It processes each request based on its type and generates the corresponding JSON responses.
+			 * 	The responses are stored in the queries array and printed to the output stream.
+			 * 	@param tc The transport catalogue.
+			 * 	@param mr The map renderer.
+			 * 	@param actprocess The activity processor.
+			 */
+			void ManageOutputRequests(TransportCatalogue& tc, MapRenderer& mr, graph::ActivityProcessor& actprocess) {
+				std::ostream& out = std::cout;
+				json::Array queries;
+				for (const auto& el : output_requests_) {
+					if (el.type == "Bus"s) {
+
+						const Bus* bus_resp = tc.FindBus(el.name);
+						if (bus_resp == nullptr) {
 
 
-            void ManageOutputRequests(TransportCatalogue& tc, MapRenderer& mr, graph::ActivityProcessor& actprocess)
-		{
-			std::ostream& out = std::cout;
-			json::Array queries;
-			for (const auto& el : output_requests_) {
-				if (el.type == "Bus"s) {
-
-					const Bus* bus_resp = tc.FindBus(el.name);
-					if (bus_resp == nullptr) {
-
-
-						json::Node answer_empty_bus = json::Builder{}
-							.StartDict().Key("error_message").Value("not found"s)
-							.Key("request_id").Value(el.id).EndDict().Build();
-
-
-
-						queries.emplace_back(answer_empty_bus);
-
-					}
-
-					else {
-						AllBusInfoBusResponse r = tc.GetAllBusInfo(el.name);
+							json::Node answer_empty_bus = json::Builder{}
+								.StartDict().Key("error_message").Value("not found"s)
+								.Key("request_id").Value(el.id).EndDict().Build();
 
 
 
-						json::Node non_empty_bus = json::Builder{}
-							.StartDict()
-							.Key("curvature").Value(r.route_curvature)
-							.Key("request_id").Value(el.id)
-							.Key("route_length").Value(r.route_length)
-							.Key("stop_count").Value(r.quant_stops)
-							.Key("unique_stop_count").Value(r.quant_uniq_stops)
-							.EndDict().Build();
+							queries.emplace_back(answer_empty_bus);
 
+						}
 
-						queries.emplace_back(non_empty_bus);
-					}
-				}
-
-				if (el.type == "Stop"s) {
-					const Stop* myStop = tc.FindStop(el.name);
-					if (myStop == nullptr) {
-
-						json::Node answer_empty_stop = json::Builder{}
-							.StartDict()
-							.Key("error_message").Value("not found"s)
-							.Key("request_id").Value(el.id)
-							.EndDict().Build();
-
-
-						queries.emplace_back(answer_empty_stop);
-
-					}
-					else {
-						set<string> r = tc.GetStopInfo(el.name);
-						json::Array routes;
-						std::copy(r.begin(), r.end(), std::back_inserter(routes));
-
-						json::Node answer_stop = json::Builder{}
-							.StartDict()
-							.Key("buses").Value(routes)
-							.Key("request_id").Value(el.id)
-							.EndDict().Build();
+						else {
+							AllBusInfoBusResponse r = tc.GetAllBusInfo(el.name);
 
 
 
-						queries.emplace_back(answer_stop);
-
-
-					}
-				}
-				if (el.type == "Map"s) {
-
-					string map_str = mr.DrawRouteGetDoc(tc);
-
-
-					json::Node answer_empty_map = json::Builder{}
-						.StartDict()
-						.Key("map").Value(map_str)
-						.Key("request_id").Value(el.id)
-						.EndDict().Build();
-
-					queries.emplace_back(answer_empty_map);
-
-
-				}
-
-				else if (el.type == "Route"s) {
-
-					if (tc.FindStop(el.from) && tc.FindStop(el.to)) {
-
-						std::optional<graph::DestinatioInfo> route = actprocess.GetRouteAndBuses(el.from, el.to);
-						std::vector<json::Node> array;
-
-						int request_id = el.id;
-						double total_time = 0;
-						std::string error_message = "not found"s;
-	
-						if (route.has_value()) {
-							total_time = route.value().all_time;
-							std::vector<std::variant<graph::BusActivity, graph::WaitingActivity>> final_route = route.value().route;
-
-							for (auto el : final_route) {
-
-								if (std::holds_alternative<graph::BusActivity>(el)) {
-									graph::BusActivity act = std::get<graph::BusActivity>(el);
-
-									json::Node bus_route_description = json::Builder{}
-										.StartDict()
-										.Key("bus").Value(act.bus_name)
-										.Key("span_count").Value(act.span_count)
-										.Key("time").Value(act.time)
-										.Key("type").Value("Bus")
-										.EndDict().Build();
-
-									array.push_back(bus_route_description);
-								}
-
-								else {
-									graph::WaitingActivity act = std::get<graph::WaitingActivity>(el);
-
-									json::Node bus_route_description = json::Builder{}
-										.StartDict()
-										.Key("stop_name").Value(act.stop_name_from)
-										.Key("time").Value(act.time)
-										.Key("type").Value("Wait")
-										.EndDict().Build();
-
-									array.push_back(bus_route_description);
-
-								}
-
-							}
-							json::Node final_route_description = json::Builder{}
+							json::Node non_empty_bus = json::Builder{}
 								.StartDict()
-								.Key("items").Value(array)
-								.Key("request_id").Value(request_id)
-								.Key("total_time").Value(total_time)
+								.Key("curvature").Value(r.route_curvature)
+								.Key("request_id").Value(el.id)
+								.Key("route_length").Value(r.route_length)
+								.Key("stop_count").Value(r.quant_stops)
+								.Key("unique_stop_count").Value(r.quant_uniq_stops)
 								.EndDict().Build();
 
-							queries.emplace_back(final_route_description);
 
+							queries.emplace_back(non_empty_bus);
+						}
+					}
+
+					if (el.type == "Stop"s) {
+						const Stop* myStop = tc.FindStop(el.name);
+						if (myStop == nullptr) {
+
+							json::Node answer_empty_stop = json::Builder{}
+								.StartDict()
+								.Key("error_message").Value("not found"s)
+								.Key("request_id").Value(el.id)
+								.EndDict().Build();
+
+
+							queries.emplace_back(answer_empty_stop);
+
+						}
+						else {
+							set<string> r = tc.GetStopInfo(el.name);
+							json::Array routes;
+							std::copy(r.begin(), r.end(), std::back_inserter(routes));
+
+							json::Node answer_stop = json::Builder{}
+								.StartDict()
+								.Key("buses").Value(routes)
+								.Key("request_id").Value(el.id)
+								.EndDict().Build();
+
+
+
+							queries.emplace_back(answer_stop);
+
+
+						}
+					}
+					if (el.type == "Map"s) {
+
+						string map_str = mr.DrawRouteGetDoc(tc);
+
+
+						json::Node answer_empty_map = json::Builder{}
+							.StartDict()
+							.Key("map").Value(map_str)
+							.Key("request_id").Value(el.id)
+							.EndDict().Build();
+
+						queries.emplace_back(answer_empty_map);
+
+
+					}
+
+					else if (el.type == "Route"s) {
+
+						if (tc.FindStop(el.from) && tc.FindStop(el.to)) {
+
+							std::optional<graph::DestinatioInfo> route = actprocess.GetRouteAndBuses(el.from, el.to);
+							std::vector<json::Node> array;
+
+							int request_id = el.id;
+							double total_time = 0;
+							std::string error_message = "not found"s;
+		
+							if (route.has_value()) {
+								total_time = route.value().all_time;
+								std::vector<std::variant<graph::BusActivity, graph::WaitingActivity>> final_route = route.value().route;
+
+								for (auto el : final_route) {
+
+									if (std::holds_alternative<graph::BusActivity>(el)) {
+										graph::BusActivity act = std::get<graph::BusActivity>(el);
+
+										json::Node bus_route_description = json::Builder{}
+											.StartDict()
+											.Key("bus").Value(act.bus_name)
+											.Key("span_count").Value(act.span_count)
+											.Key("time").Value(act.time)
+											.Key("type").Value("Bus")
+											.EndDict().Build();
+
+										array.push_back(bus_route_description);
+									}
+
+									else {
+										graph::WaitingActivity act = std::get<graph::WaitingActivity>(el);
+
+										json::Node bus_route_description = json::Builder{}
+											.StartDict()
+											.Key("stop_name").Value(act.stop_name_from)
+											.Key("time").Value(act.time)
+											.Key("type").Value("Wait")
+											.EndDict().Build();
+
+										array.push_back(bus_route_description);
+
+									}
+
+								}
+								json::Node final_route_description = json::Builder{}
+									.StartDict()
+									.Key("items").Value(array)
+									.Key("request_id").Value(request_id)
+									.Key("total_time").Value(total_time)
+									.EndDict().Build();
+
+								queries.emplace_back(final_route_description);
+
+							}
+							else {
+								int request_id = el.id;
+								std::string error_message = "not found"s;
+								json::Node final_route_description = json::Builder{}
+									.StartDict()
+									.Key("request_id").Value(request_id)
+									.Key("error_message").Value(error_message)
+									.EndDict().Build();
+								queries.emplace_back(final_route_description);
+
+							}
 						}
 						else {
 							int request_id = el.id;
@@ -240,27 +254,15 @@ namespace transport_catalogue {
 							queries.emplace_back(final_route_description);
 
 						}
-					}
-					else {
-						int request_id = el.id;
-						std::string error_message = "not found"s;
-						json::Node final_route_description = json::Builder{}
-							.StartDict()
-							.Key("request_id").Value(request_id)
-							.Key("error_message").Value(error_message)
-							.EndDict().Build();
-						queries.emplace_back(final_route_description);
 
 					}
-
 				}
+				json::Print(json::Document{ queries }, out);
 			}
-			json::Print(json::Document{ queries }, out);
-		}
-           
-        RenderData GetRenderData();
+			
+			RenderData GetRenderData();
 
-        void UpdRouteSettings(TransportCatalogue& tc);
+			void UpdRouteSettings(TransportCatalogue& tc);
 
         private:
 

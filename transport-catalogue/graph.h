@@ -13,6 +13,11 @@ namespace graph {
     using VertexId = size_t;
     using EdgeId = size_t;
 
+    /**
+     * @struct Edge
+     * @brief Struct representing an edge in a directed weighted graph.
+     * @tparam Weight The weight type of the edge.
+     */
     template <typename Weight>
     struct Edge {
         VertexId from;
@@ -27,6 +32,11 @@ namespace graph {
         }
     };
 
+    /**
+     * @class DirectedWeightedGraph
+     * @brief Class representing a directed weighted graph.
+     * @tparam Weight The weight type of the graph.
+     */
     template <typename Weight>
     class DirectedWeightedGraph {
     private:
