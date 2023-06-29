@@ -62,8 +62,8 @@ namespace graph {
          * @param stop_name_to The name of the destination stop.
          * @return An optional DestinationInfo structure with the calculated route and buses, or std::nullopt if the stops are not found.
          */
-		std::optional<DestinatioInfo> ActivityProcessor::GetRouteAndBuses(std::string_view stop_name_from, std::string_view stop_name_to) {
-			DestinatioInfo dest_info;
+		std::optional<DestinationInfo> ActivityProcessor::GetRouteAndBuses(std::string_view stop_name_from, std::string_view stop_name_to) {
+			DestinationInfo dest_info;
 			std::vector<std::variant<graph::BusActivity, graph::WaitingActivity>> final_route;
 			size_t from;
 			size_t to;

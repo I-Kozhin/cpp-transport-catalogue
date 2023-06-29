@@ -179,7 +179,7 @@ namespace transport_catalogue {
 
 						if (tc.FindStop(el.from) && tc.FindStop(el.to)) {
 
-							std::optional<graph::DestinatioInfo> route = actprocess.GetRouteAndBuses(el.from, el.to);
+							std::optional<graph::DestinationInfo> route = actprocess.GetRouteAndBuses(el.from, el.to);
 							std::vector<json::Node> array;
 
 							int request_id = el.id;
