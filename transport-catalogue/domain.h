@@ -40,9 +40,9 @@ namespace domain {
 	};
 
 	/**
-     * @struct AllBusInfoBusResponse
-     * @brief Struct representing the information of a bus response including the bus name, number of stops, number of unique stops, route length, and route curvature.
-     */
+	 * @struct AllBusInfoBusResponse
+	 * @brief Struct representing the information of a bus response including the bus name, number of stops, number of unique stops, route length, and route curvature.
+	 */
 	struct AllBusInfoBusResponse {
 		std::string bus_name;
 		int quant_stops;
@@ -53,9 +53,9 @@ namespace domain {
 
 
 	/**
-     * @struct Bus
-     * @brief Struct representing a bus with a bus name, list of stops, and type.
-     */
+	 * @struct Bus
+	 * @brief Struct representing a bus with a bus name, list of stops, and type.
+	 */
 	struct Bus {
 		std::string bus_name;
 		std::deque<std::string_view> stops;
