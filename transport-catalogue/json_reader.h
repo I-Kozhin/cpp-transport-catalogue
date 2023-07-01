@@ -84,13 +84,13 @@ namespace transport_catalogue {
 
 
 			/**
-			 * 	@brief Manages the output requests for the transport catalogue and map renderer.
-			 * 	This function handles the output requests specified in the output_requests_ queue.
-			 * 	It processes each request based on its type and generates the corresponding JSON responses.
-			 * 	The responses are stored in the queries array and printed to the output stream.
-			 * 	@param tc The transport catalogue.
-			 * 	@param mr The map renderer.
-			 * 	@param actprocess The activity processor.
+			 * @brief Manages the output requests for the transport catalogue and map renderer.
+			 * This function handles the output requests specified in the output_requests_ queue.
+			 * It processes each request based on its type and generates the corresponding JSON responses.
+			 * The responses are stored in the queries array and printed to the output stream.
+			 * @param tc The transport catalogue.
+			 * @param mr The map renderer.
+			 * @param actprocess The activity processor.
 			 */
 			void ManageOutputRequests(TransportCatalogue& tc, MapRenderer& mr, graph::TransportRouter& actprocess) {
 				std::ostream& out = std::cout;
