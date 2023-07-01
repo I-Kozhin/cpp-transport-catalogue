@@ -25,7 +25,6 @@ namespace domain {
 
 	/**
      * @struct Stop
-     *
      * @brief Struct representing a stop with a stop name and coordinates.
      */
 	struct Stop {
@@ -36,7 +35,6 @@ namespace domain {
 
 	/**
      * @struct BusDescription
-     *
      * @brief Struct representing a bus with a bus name, list of stops, and type.
      */
 	struct BusDescription {
@@ -47,7 +45,6 @@ namespace domain {
 
 	/**
      * @struct AllBusInfoBusResponse
-     *
      * @brief Struct representing the information of a bus response including the bus name, number of stops, number of unique stops, route length, and route curvature.
      */
 	struct AllBusInfoBusResponse {
@@ -61,7 +58,6 @@ namespace domain {
 
 	/**
      * @struct Bus
-     *
      * @brief Struct representing a bus with a bus name, list of stops, and type.
      */
 	struct Bus {
