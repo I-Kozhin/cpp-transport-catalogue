@@ -13,20 +13,16 @@
 
 namespace domain {
 
-	/**
-     * @struct StopDistancesDescription
-     *
-     * @brief Struct representing a stop distances description with a stop name and distances to other stops.
-     */
+
 	struct StopDistancesDescription {
 		std::string stop_name;
 		std::vector<std::pair<std::string, int>> distances;
 	};
 
 	/**
-     * @struct Stop
-     * @brief Struct representing a stop with a stop name and coordinates.
-     */
+	 * @struct Stop
+	 * @brief Struct representing a stop with a stop name and coordinates.
+	 */
 	struct Stop {
 		std::string stop_name;
 		geo::Coordinates coordinates;
@@ -34,9 +30,9 @@ namespace domain {
 	};
 
 	/**
-     * @struct BusDescription
-     * @brief Struct representing a bus with a bus name, list of stops, and type.
-     */
+		 * @struct BusDescription
+		 * @brief Struct representing a bus with a bus name, list of stops, and type.
+		 */
 	struct BusDescription {
 		std::string bus_name;
 		std::vector<std::string> stops;
