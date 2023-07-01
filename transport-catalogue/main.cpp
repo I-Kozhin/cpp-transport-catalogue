@@ -45,7 +45,6 @@ int main(int argc, char* argv[]) {
 
         serialization::catalogue_serialization(tc, rd , routeSettings, out_file);
 
-        //catalogue_serialization(transport_catalogue, render_settings, routing_settings, out_file);
     }
     else if (mode == "process_requests"sv) {
 

@@ -10,7 +10,7 @@
 #include "map_renderer.h"
 
 namespace transport_catalogue {
-    // class MapRenderer; // Добавленное объявление класса MapRenderer ///////////////
+    
     /**
      * @class RequestHandler
      * @brief Handles requests and provides various functionalities related to transport data.

@@ -2,6 +2,14 @@
 
 namespace serialization {
 
+    /**
+     * @brief Calculates the ID based on a range of elements and a name.
+     * @tparam It The type of iterator.
+     * @param start The start iterator of the range.
+     * @param end The end iterator of the range.
+     * @param name The name for which the ID is calculated.
+     * @return The calculated ID.
+     */
     template <typename It>
     uint32_t calculate_id(It start, It end, std::string_view name) {
 
@@ -9,6 +17,11 @@ namespace serialization {
         return std::distance(start, stop_it);
     }
 
+    /**
+     * @brief Serializes the Transport Catalogue into a protobuf object.
+     * @param transport_catalogue The Transport Catalogue object.
+     * @return The serialized Transport Catalogue protobuf object.
+     */
     transport_catalogue_protobuf::TransportCatalogue transport_catalogue_serialization(const transport_catalogue::TransportCatalogue& transport_catalogue) {
 
         transport_catalogue_protobuf::TransportCatalogue transport_catalogue_proto;
@@ -73,6 +86,11 @@ namespace serialization {
     }
 
 
+    /**
+     * @brief Deserializes the Transport Catalogue from a protobuf object.
+     * @param transport_catalogue_proto The serialized Transport Catalogue protobuf object.
+     * @return The deserialized Transport Catalogue object.
+     */
     transport_catalogue::TransportCatalogue transport_catalogue_deserialization(const transport_catalogue_protobuf::TransportCatalogue& transport_catalogue_proto) {
 
         transport_catalogue::TransportCatalogue transport_catalogue;
@@ -127,6 +145,11 @@ namespace serialization {
         return transport_catalogue;
     }
 
+    /**
+     * @brief Serializes the Color object into a protobuf object.
+     * @param tc_color The Color object.
+     * @return The serialized Color protobuf object.
+     */
     transport_catalogue_protobuf::Color serialize_color(const svg::Color& tc_color) {
 
         transport_catalogue_protobuf::Color color_proto;
@@ -156,6 +179,12 @@ namespace serialization {
         return color_proto;
     }
 
+
+    /**
+     * @brief Deserializes the Color object from a protobuf object.
+     * @param color_proto The serialized Color protobuf object.
+     * @return The deserialized Color object.
+     */
     svg::Color deserialize_color(const transport_catalogue_protobuf::Color& color_proto) {
 
         svg::Color color;
@@ -184,6 +213,11 @@ namespace serialization {
         return color;
     }
 
+    /**
+     * @brief Serializes the RenderData object into a protobuf object.
+     * @param render_settings The RenderData object.
+     * @return The serialized RenderData protobuf object.
+     */
     transport_catalogue_protobuf::RenderSettings render_settings_serialization(const transport_catalogue::RenderData& render_settings) {
 
         transport_catalogue_protobuf::RenderSettings render_settings_proto;
@@ -219,6 +253,11 @@ namespace serialization {
         return render_settings_proto;
     }
 
+    /**
+     * @brief Deserializes the RenderData object from a protobuf object.
+     * @param render_settings_proto The serialized RenderData protobuf object.
+     * @return The deserialized RenderData object.
+     */
     transport_catalogue::RenderData render_settings_deserialization(const transport_catalogue_protobuf::RenderSettings& render_settings_proto) {
 
         transport_catalogue::RenderData render_settings;
@@ -248,6 +287,11 @@ namespace serialization {
         return render_settings;
     }
 
+    /**
+     * @brief Serializes the RouteSettings object into a protobuf object.
+     * @param routing_settings The RouteSettings object.
+     * @return The serialized RouteSettings protobuf object.
+     */
     transport_catalogue_protobuf::RouteSettings  routing_settings_serialization(const domain::RouteSettings& routing_settings) {
 
         transport_catalogue_protobuf::RouteSettings routing_settings_proto;
@@ -258,6 +302,11 @@ namespace serialization {
         return routing_settings_proto;
     }
 
+    /**
+     * @brief Deserializes the RouteSettings object from a protobuf object.
+     * @param routing_settings_proto The serialized RouteSettings protobuf object.
+     * @return The deserialized RouteSettings object.
+     */
     domain::RouteSettings routing_settings_deserialization(const transport_catalogue_protobuf::RouteSettings& routing_settings_proto) {
 
         domain::RouteSettings routing_settings;
@@ -268,6 +317,13 @@ namespace serialization {
         return routing_settings;
     }
 
+    /**
+     * @brief Serializes the Catalogue object into a protobuf object and writes it to the output stream.
+     * @param transport_catalogue The Transport Catalogue object.
+     * @param render_settings The RenderData object.
+     * @param routing_settings The RouteSettings object.
+     * @param out The output stream to write the serialized data to.
+     */
     void catalogue_serialization(const transport_catalogue::TransportCatalogue& transport_catalogue,
                                  const transport_catalogue::RenderData& render_settings,
                                  const domain::RouteSettings& routing_settings,
@@ -287,6 +343,12 @@ namespace serialization {
 
     }
 
+    /**
+     * @brief Deserializes the Catalogue object from an input stream.
+     * @param in The input stream containing the serialized data.
+     * @return The deserialized Catalogue object.
+     * @throws std::runtime_error if the serialized file cannot be parsed from the input stream.
+     */
     Catalogue catalogue_deserialization(std::istream& in) {
 
         transport_catalogue_protobuf::Catalogue catalogue_proto;
@@ -300,4 +362,4 @@ namespace serialization {
                 render_settings_deserialization(catalogue_proto.render_settings()),
                 routing_settings_deserialization(catalogue_proto.routing_settings())};
     }
-}//end namespace serialization
+}  // namespace serialization

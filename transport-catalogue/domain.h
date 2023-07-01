@@ -80,6 +80,10 @@ namespace domain {
 
 	};
 
+	/**
+	 * @struct Distance
+	 * @brief Struct representing the distance between two stops.
+	 */
 	struct Distance {
 		const Stop* start;
 		const Stop* end;

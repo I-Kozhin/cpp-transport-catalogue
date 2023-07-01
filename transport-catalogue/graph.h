@@ -21,13 +21,17 @@ namespace graph {
      */
     template <typename Weight>
     struct Edge {
-        VertexId from;
-        VertexId to;
-        Weight weight;
+        VertexId from;   /**< The source vertex of the edge. */
+        VertexId to;     /**< The target vertex of the edge. */
+        Weight weight;   /**< The weight of the edge. */
+        std::string name;   /**< The name of the edge. */
+        int stop_count; /**< The number of stops in the edge. */
 
-        std::string name;
-        int stop_count;
-
+        /**
+         * @brief Overloaded equality operator for comparing edges.
+         * @param other The edge to compare with.
+         * @return True if the edges are equal, False otherwise.
+         */
         bool operator==(const Edge& other) const {
             return from == other.from && to == other.to && weight == other.weight;
         }
@@ -40,23 +44,23 @@ namespace graph {
      */
     template <typename Weight>
     class DirectedWeightedGraph {
-    private:
-        using IncidenceList = std::vector<EdgeId>;
-        using IncidentEdgesRange = ranges::Range<typename IncidenceList::const_iterator>;
+        private:
+            using IncidenceList = std::vector<EdgeId>;
+            using IncidentEdgesRange = ranges::Range<typename IncidenceList::const_iterator>;
 
-    public:
-        DirectedWeightedGraph() = default;
-        explicit DirectedWeightedGraph(size_t vertex_count);
-        EdgeId AddEdge(const Edge<Weight>& edge);
+        public:
+            DirectedWeightedGraph() = default;
+            explicit DirectedWeightedGraph(size_t vertex_count);
+            EdgeId AddEdge(const Edge<Weight>& edge);
 
-        size_t GetVertexCount() const;
-        size_t GetEdgeCount() const;
-        const Edge<Weight>& GetEdge(EdgeId edge_id) const;
-        IncidentEdgesRange GetIncidentEdges(VertexId vertex) const;
+            size_t GetVertexCount() const;
+            size_t GetEdgeCount() const;
+            const Edge<Weight>& GetEdge(EdgeId edge_id) const;
+            IncidentEdgesRange GetIncidentEdges(VertexId vertex) const;
 
-    private:
-        std::vector<Edge<Weight>> edges_;
-        std::vector<IncidenceList> incidence_lists_;
+        private:
+            std::vector<Edge<Weight>> edges_;
+            std::vector<IncidenceList> incidence_lists_;
     };
 
     template <typename Weight>

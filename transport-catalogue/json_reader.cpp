@@ -52,12 +52,17 @@ namespace transport_catalogue {
 
 	}
 
-
+	/**
+	 * @brief Constructs an InputReaderJson object with the input stream.
+	 * @param is The input stream.
+	 */
 	InputReaderJson::InputReaderJson(istream& is) : input_stream_(is), load_(json::Load(is)) {
 
 	}
 
-
+	/**
+	 * @brief Reads the base requests from the JSON input.
+	 */
 	void InputReaderJson::ReadInputJsonBaseRequest() {
 		const auto& json_array = ((load_.GetRoot()).AsDict()).at("base_requests"s);
 		for (const auto& file : json_array.AsArray()) {
@@ -102,6 +107,9 @@ namespace transport_catalogue {
 
 	}
 
+	/**
+	 * @brief Reads the stat requests from the JSON input.
+	 */
 	void InputReaderJson::ReadInputJsonStatRequest() {
 		const auto& json_array_out = ((load_.GetRoot()).AsDict()).at("stat_requests"s);
 		if (!json_array_out.IsNull()) {
@@ -132,6 +140,9 @@ namespace transport_catalogue {
 
 	}
 
+	/**
+	 * @brief Reads the render settings from the JSON input.
+	 */
 	void InputReaderJson::ReadInputJsonRenderSettings() {
 
 		const auto& json_array_render = ((load_.GetRoot()).AsDict()).at("render_settings"s).AsDict();
@@ -197,6 +208,9 @@ namespace transport_catalogue {
 
 	}
 
+	/**
+	 * @brief Reads the route settings from the JSON input.
+	 */
 	void InputReaderJson::ReadInputJsonRouteSettings() {
 		const auto& json_array_out = ((load_.GetRoot()).AsDict()).at("routing_settings"s);
 		const auto& json_obj = json_array_out.AsDict();
@@ -204,12 +218,18 @@ namespace transport_catalogue {
 		route_settings_.bus_wait_time = json_obj.at("bus_wait_time").AsDouble();
 	}
 
+	/**
+	 * @brief Reads the serialization settings from the JSON input.
+	 */
 	void InputReaderJson::ReadInputJsonSerializeSettings() {
 		const auto& json_array_out = ((load_.GetRoot()).AsDict()).at("serialization_settings"s);
 		const auto& json_obj = json_array_out.AsDict();
 		serialize_file_path_ = json_obj.at("file").AsString();
 	}
 
+	/**
+	 * @brief Reads the request information from the JSON input.
+	 */
 	void InputReaderJson::ReadInputJsonRequest() {
 		ReadInputJsonBaseRequest();
 		ReadInputJsonRenderSettings();
@@ -217,6 +237,9 @@ namespace transport_catalogue {
 		ReadInputJsonSerializeSettings();
 	}
 
+	/**
+	 * @brief Reads the request information for filling the base from the JSON input.
+	 */
 	void InputReaderJson::ReadInputJsonRequestForFillBase() {
 		ReadInputJsonBaseRequest();
 		ReadInputJsonRenderSettings();
@@ -224,42 +247,73 @@ namespace transport_catalogue {
 		ReadInputJsonSerializeSettings();
 	}
 
+	/**
+	 * @brief Reads the request information for reading the base from the JSON input.
+	 */
 	void InputReaderJson::ReadInputJsonRequestForReadBase() {
 		ReadInputJsonSerializeSettings();
 		ReadInputJsonStatRequest();
 	}
 
+	/**
+	 * @brief Updates the stop data in the transport catalogue.
+	 * @param tc The transport catalogue to update.
+	 */
 	void InputReaderJson::UpdStop(TransportCatalogue& tc) {
 		for (int i = 0; i < static_cast<int>(update_requests_stop_.size()); ++i) {
 			tc.AddStop(update_requests_stop_[i]);
 		}
 	}
 
+	/**
+	 * @brief Updates the stop distances data in the transport catalogue.
+	 * @param tc The transport catalogue to update.
+	 */
 	void InputReaderJson::UpdStopDist(TransportCatalogue& tc) {
 		for (int i = 0; i < static_cast<int>(distances_.size()); ++i) {
 			tc.AddStopDistance(distances_[i]);
 		}
 	}
 
+	/**
+	 * @brief Updates the bus data in the transport catalogue.
+	 * @param tc The transport catalogue to update.
+	 */
 	void InputReaderJson::UpdBus(TransportCatalogue& tc) {
 		for (int i = 0; i < static_cast<int>(update_requests_bus_.size()); ++i) {
 			tc.AddBus(update_requests_bus_[i]);
 		}
 	}
 
+	/**
+	 * @brief Returns the render data read from the JSON input.
+	 * @return The render data.
+	 */
 	RenderData InputReaderJson::GetRenderData() {
 		return render_data_;
 	}
 
+	/**
+	 * @brief Updates the route settings in the transport catalogue.
+	 * @param tc The transport catalogue to update.
+	 */
 	void InputReaderJson::UpdRouteSettings(TransportCatalogue& tc) {
 		tc.AddRouteSettings(route_settings_);
 	}
 
+	/**
+	 * @brief Updates the serialization settings in the transport catalogue.
+	 * @param tc The transport catalogue to update.
+	 */
 	void InputReaderJson::UpdSerializeSettings(TransportCatalogue& tc) {
 		tc.AddSerializePathToFile(serialize_file_path_);
 
 	}
 
+	/**
+	 * @brief Returns the file path for serialization.
+	 * @return The file path for serialization.
+	 */
 	std::string InputReaderJson::GetSerializeFilePath() {
 		return serialize_file_path_;
 	}

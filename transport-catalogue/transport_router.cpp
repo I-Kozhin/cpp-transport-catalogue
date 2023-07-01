@@ -254,7 +254,7 @@ namespace graph {
          * @param stops The deque of stop names in the bus route.
          * @param bus_name The name of the bus.
          */
-		void TransportRouter::AddStopsNonRoundTrip(std::deque<std::string_view> stops, const std::string& bus_name) {  // Тут если передать stops по константной ссылке то ошибка в utility
+		void TransportRouter::AddStopsNonRoundTrip(std::deque<std::string_view> stops, const std::string& bus_name) {
 			AddStopsOneDirection(stops, bus_name);
 			std::reverse(stops.begin(), stops.end());
 			AddStopsOneDirection(stops, bus_name);
