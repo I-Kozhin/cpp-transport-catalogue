@@ -19,10 +19,10 @@ using namespace svg;
 namespace transport_catalogue {
 
 	/**
-     * @brief Gets the color from a JSON node.
-     * @param el The JSON node representing the color.
-     * @return The color extracted from the JSON node.
-     */
+	 * @brief Gets the color from a JSON node.
+	 * @param el The JSON node representing the color.
+	 * @return The color extracted from the JSON node.
+	 */
 	svg::Color GetColor(const json::Node& el) {
 		svg::Color color;
 
