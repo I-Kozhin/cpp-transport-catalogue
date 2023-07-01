@@ -11,15 +11,13 @@ namespace graph {
 
 		const double MINUTES_PER_KILOMETER = 1000.0 / 60.0;
 
-        /**
-         * @brief Constructs an TransportRouter object.
-         *
-         * This constructor initializes the TransportRouter with a reference to the TransportCatalogue.
-         * It creates a DirectedWeightedGraph and adds knots based on the stops in the TransportCatalogue.
-         * It also creates a Router object for route calculation using the created graph.
-         *
-         * @param tc The TransportCatalogue reference.
-         */
+		/**
+		 * @brief Constructs an TransportRouter object.
+		 * This constructor initializes the TransportRouter with a reference to the TransportCatalogue.
+		 * It creates a DirectedWeightedGraph and adds knots based on the stops in the TransportCatalogue.
+		 * It also creates a Router object for route calculation using the created graph.
+		 * @param tc The TransportCatalogue reference.
+		 */
 		TransportRouter::TransportRouter(transport_catalogue::TransportCatalogue& tc)
 			: tc(tc) {
 			graph_ = DirectedWeightedGraph<double>(2 * tc.GetStopsQuantity());
@@ -28,12 +26,11 @@ namespace graph {
 			router_ = std::unique_ptr<graph::Router<double>>(new graph::Router<double>(graph_));
 		}
 
-        /**
-         * @brief Adds knots to the graph based on the stops in the TransportCatalogue.
-         *
-         * This function iterates through the buses in the TransportCatalogue and adds stops as knots to the graph.
-         * It distinguishes between round-trip and non-round-trip buses and adds the stops accordingly.
-         */
+		/**
+		 * @brief Adds knots to the graph based on the stops in the TransportCatalogue.
+		 * This function iterates through the buses in the TransportCatalogue and adds stops as knots to the graph.
+		 * It distinguishes between round-trip and non-round-trip buses and adds the stops accordingly.
+		 */
 		void TransportRouter::AddKnots() {
 			const std::deque<domain::Bus>& buses_ = tc.GetBuses();
 
@@ -51,17 +48,15 @@ namespace graph {
 			}
 		}
 
-        /**
-         * @brief Calculates the route and buses between two stops.
-         *
-         * This function calculates the route and buses between the specified starting and destination stops.
-         * It uses the Router to find the shortest route in the graph.
-         * The result includes a vector of variant types representing bus activities and waiting activities in the route.
-         *
-         * @param stop_name_from The name of the starting stop.
-         * @param stop_name_to The name of the destination stop.
-         * @return An optional DestinationInfo structure with the calculated route and buses, or std::nullopt if the stops are not found.
-         */
+		/**
+		 * @brief Calculates the route and buses between two stops.
+		 * This function calculates the route and buses between the specified starting and destination stops.
+		 * It uses the Router to find the shortest route in the graph.
+		 * The result includes a vector of variant types representing bus activities and waiting activities in the route.
+		 * @param stop_name_from The name of the starting stop.
+		 * @param stop_name_to The name of the destination stop.
+		 * @return An optional DestinationInfo structure with the calculated route and buses, or std::nullopt if the stops are not found.
+		 */
 		std::optional<DestinationInfo> TransportRouter::GetRouteAndBuses(std::string_view stop_name_from, std::string_view stop_name_to) {
 			DestinationInfo dest_info;
 			std::vector<std::variant<graph::BusActivity, graph::WaitingActivity>> final_route;
@@ -119,15 +114,13 @@ namespace graph {
 
 		}
 
-        /**
-         * @brief Retrieves the value associated with a key in the stop_to_vertex_ map.
-         *
-         * This function retrieves the value associated with a key in the stop_to_vertex_ map,
-         * which represents the vertex index in the graph for a given stop name.
-         *
-         * @param key The stop name.
-         * @return An optional size_t value representing the vertex index, or std::nullopt if the key is not found.
-         */
+		/**
+		 * @brief Retrieves the value associated with a key in the stop_to_vertex_ map.
+		 * This function retrieves the value associated with a key in the stop_to_vertex_ map,
+		 * which represents the vertex index in the graph for a given stop name.
+		 * @param key The stop name.
+		 * @return An optional size_t value representing the vertex index, or std::nullopt if the key is not found.
+		 */
 		std::optional<size_t> TransportRouter::GetValueByKey(std::string_view key) {
 			auto it = stop_to_vertex_.find(key);
 			if (it != stop_to_vertex_.end()) {
@@ -138,14 +131,12 @@ namespace graph {
 			}
 		}
 
-        /**
-         * @brief Checks if a stop exists in the stop_to_vertex_ map.
-         *
-         * This function checks if a stop exists in the stop_to_vertex_ map by searching for the specified key.
-         *
-         * @param key The stop name.
-         * @return True if the stop exists, False otherwise.
-         */
+		/**
+		 * @brief Checks if a stop exists in the stop_to_vertex_ map.
+		 * This function checks if a stop exists in the stop_to_vertex_ map by searching for the specified key.
+		 * @param key The stop name.
+		 * @return True if the stop exists, False otherwise.
+		 */
 		bool TransportRouter::ChekExistValue(std::string_view key) {
 			auto it = stop_to_vertex_.find(key);
 			if (it != stop_to_vertex_.end()) {
@@ -156,15 +147,13 @@ namespace graph {
 			}
 		}
 
-        /**
-         * @brief Adds stops to the graph in one direction for a given bus.
-         *
-         * This function adds stops to the graph in one direction for a given bus.
-         * It creates vertex indices for the stops and connects them with edges representing the bus route.
-         *
-         * @param stops The deque of stop names in the bus route.
-         * @param bus_name The name of the bus.
-         */
+		/**
+		 * @brief Adds stops to the graph in one direction for a given bus.
+		 * This function adds stops to the graph in one direction for a given bus.
+		 * It creates vertex indices for the stops and connects them with edges representing the bus route.
+		 * @param stops The deque of stop names in the bus route.
+		 * @param bus_name The name of the bus.
+		 */
 		void TransportRouter::AddStopsOneDirection(const std::deque<std::string_view>& stops, const std::string& bus_name) {
 
 			for (auto it = stops.begin(); std::next(it) != stops.end(); ++it) {
@@ -245,15 +234,13 @@ namespace graph {
 
 		}
 
-        /**
-         * @brief Adds stops to the graph in both directions for a given bus.
-         *
-         * This function adds stops to the graph in both directions for a given bus.
-         * It first adds the stops in one direction and then reverses the order and adds them again.
-         *
-         * @param stops The deque of stop names in the bus route.
-         * @param bus_name The name of the bus.
-         */
+		/**
+		 * @brief Adds stops to the graph in both directions for a given bus.
+		 * This function adds stops to the graph in both directions for a given bus.
+		 * It first adds the stops in one direction and then reverses the order and adds them again.
+		 * @param stops The deque of stop names in the bus route.
+		 * @param bus_name The name of the bus.
+		 */
 		void TransportRouter::AddStopsNonRoundTrip(std::deque<std::string_view> stops, const std::string& bus_name) {
 			AddStopsOneDirection(stops, bus_name);
 			std::reverse(stops.begin(), stops.end());
