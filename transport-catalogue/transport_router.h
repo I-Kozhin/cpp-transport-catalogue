@@ -38,10 +38,10 @@ namespace graph {
         double all_time = 0.0; /**< The total time of the destination */
     };
 
-    /**
-     * @class TransportRouter
-     * @brief Class responsible for processing activities and finding routes between stops.
-     */
+        /**
+         * @class TransportRouter
+         * @brief Class responsible for processing activities and finding routes between stops.
+         */
 	class TransportRouter {
 
         public:

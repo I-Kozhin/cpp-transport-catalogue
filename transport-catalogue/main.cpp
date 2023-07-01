@@ -4,6 +4,7 @@
 #include "iostream"
 #include "map_renderer.h"
 #include "request_handler.h"
+#include <fstream>
 #include <chrono>
 #include "serialization.h"
 #include "transport_router.h"
