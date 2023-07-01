@@ -19,7 +19,7 @@ namespace serialization {
 
     struct Catalogue {
         transport_catalogue::TransportCatalogue transport_catalogue_;
-        transport_catalogue::RenderData render_data_;
+        transport_catalogue::RenderData render_settings_;
         domain::RouteSettings routing_settings_;
     };
 
@@ -38,7 +38,7 @@ namespace serialization {
     domain::RouteSettings routing_settings_deserialization(const transport_catalogue_protobuf::RouteSettings& routing_settings_proto);
 
     void catalogue_serialization(const transport_catalogue::TransportCatalogue& transport_catalogue,
-                                 const transport_catalogue::RenderData& render_data,
+                                 const transport_catalogue::RenderData& render_settings,
                                  const domain::RouteSettings& routing_settings,
                                  std::ostream& out);
 

@@ -184,16 +184,16 @@ namespace serialization {
         return color;
     }
 
-    transport_catalogue_protobuf::RenderSettings render_data_serialization(const transport_catalogue::RenderData& render_settings) {
+    transport_catalogue_protobuf::RenderSettings render_settings_serialization(const transport_catalogue::RenderData& render_settings) {
 
-        transport_catalogue_protobuf::RenderSettings render_data_proto;
+        transport_catalogue_protobuf::RenderSettings render_settings_proto;
 
-        render_data_proto.set_width_(render_settings.width_);
-        render_data_proto.set_height_(render_settings.height_);
-        render_data_proto.set_padding_(render_settings.padding_);
-        render_data_proto.set_line_width_(render_settings.line_width_);
-        render_data_proto.set_stop_radius_(render_settings.stop_radius_);
-        render_data_proto.set_bus_label_font_size_(render_settings.bus_label_font_size_);
+        render_settings_proto.set_width_(render_settings.width_);
+        render_settings_proto.set_height_(render_settings.height_);
+        render_settings_proto.set_padding_(render_settings.padding_);
+        render_settings_proto.set_line_width_(render_settings.line_width_);
+        render_settings_proto.set_stop_radius_(render_settings.stop_radius_);
+        render_settings_proto.set_bus_label_font_size_(render_settings.bus_label_font_size_);
 
         transport_catalogue_protobuf::Point bus_label_offset_proto;
         bus_label_offset_proto.set_x(render_settings.bus_label_offset_.first);
@@ -269,14 +269,14 @@ namespace serialization {
     }
 
     void catalogue_serialization(const transport_catalogue::TransportCatalogue& transport_catalogue,
-                                 const transport_catalogue::RenderData& render_data,
+                                 const transport_catalogue::RenderData& render_settings,
                                  const domain::RouteSettings& routing_settings,
                                  std::ostream& out) {
 
         transport_catalogue_protobuf::Catalogue catalogue_proto;
 
         transport_catalogue_protobuf::TransportCatalogue transport_catalogue_proto = transport_catalogue_serialization(transport_catalogue);
-        transport_catalogue_protobuf::RenderSettings render_settings_proto = render_settings_serialization(render_data);
+        transport_catalogue_protobuf::RenderSettings render_settings_proto = render_settings_serialization(render_settings);
         transport_catalogue_protobuf::RouteSettings routing_settings_proto = routing_settings_serialization(routing_settings);
 
         *catalogue_proto.mutable_transport_catalogue() = std::move(transport_catalogue_proto);

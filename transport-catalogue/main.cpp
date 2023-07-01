@@ -54,7 +54,7 @@ int main(int argc, char* argv[]) {
 
         ifstream in_file(reader.GetSerializeFilePath(), ios::binary);
         auto catalogue = serialization::catalogue_deserialization(in_file);
-        RenderData rd = catalogue.render_data_;
+        RenderData rd = catalogue.render_settings_;
         transport_catalogue::TransportCatalogue tc = catalogue.transport_catalogue_;
         tc.AddRouteSettings(catalogue.routing_settings_);
 
