@@ -4,15 +4,13 @@
 #include "iostream"
 #include "map_renderer.h"
 #include "request_handler.h"
-#include <fstream>
-using namespace transport_catalogue;
-using namespace std;
 #include <chrono>
 #include "serialization.h"
 #include "transport_router.h"
 #include <string_view>
-
+using namespace transport_catalogue;
 using namespace std::literals;
+
 void PrintUsage(std::ostream& stream = std::cerr) {
     stream << "Usage: transport_catalogue [make_base|process_requests]\n"sv;
 }

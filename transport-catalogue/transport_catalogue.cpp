@@ -16,10 +16,9 @@ namespace transport_catalogue {
 	const double MINUTES_PER_KILOMETER = 1000.0 / 60.0;
 
 	/**
-     * @brief Добавляет автобус в транспортный каталог.
-	 * 
-     * @param bus_desc Структура BusDescription с информацией об автобусе.
-     */
+	 * @brief Добавляет автобус в транспортный каталог.
+	 * @param bus_desc Структура BusDescription с информацией об автобусе.
+	 */
 	void TransportCatalogue::AddBus(const BusDescription& bus_desc) {
 		Bus bptr;
 		deque <std::string_view> stops_ptr;
