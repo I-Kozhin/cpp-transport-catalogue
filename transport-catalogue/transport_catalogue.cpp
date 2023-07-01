@@ -41,10 +41,9 @@ namespace transport_catalogue {
 	}
 
 	/**
-     * @brief Adds a stop to the transport catalogue.
-     *
-     * @param stop The Stop structure with information about the stop.
-     */
+	 * @brief Adds a stop to the transport catalogue.
+	 * @param stop The Stop structure with information about the stop.
+	 */
 	void TransportCatalogue::AddStop(Stop stop) {
 		stops_.push_back(move(stop));
 		Stop* ptr_stop = &stops_.back();
@@ -52,10 +51,10 @@ namespace transport_catalogue {
 	}
 
 	/**
-     * @brief Находит автобус по его названию.
-     * @param bus Название автобуса.
-     * @return Указатель на структуру Bus с информацией о найденном автобусе или nullptr, если автобус не найден.
-     */
+	 * @brief Находит автобус по его названию.
+	 * @param bus Название автобуса.
+	 * @return Указатель на структуру Bus с информацией о найденном автобусе или nullptr, если автобус не найден.
+	 */
 	const Bus* TransportCatalogue::FindBus(string_view bus) const {
 		const Bus* res = nullptr;
 		if (bus_name_to_bus_.count(bus)) {
@@ -67,10 +66,10 @@ namespace transport_catalogue {
 	}
 
 	/**
-     * @brief Находит остановку по ее названию.
-     * @param stop Указатель на название остановки.
-     * @return Указатель на структуру Stop с информацией о найденной остановке или nullptr, если остановка не найдена.
-     */
+	 * @brief Находит остановку по ее названию.
+	 * @param stop Указатель на название остановки.
+	 * @return Указатель на структуру Stop с информацией о найденной остановке или nullptr, если остановка не найдена.
+	 */
 	const Stop* TransportCatalogue::FindStop(std::string_view stop) const {
 		const Stop* res = nullptr;
 
@@ -83,10 +82,10 @@ namespace transport_catalogue {
 	}
 
 	/**
-     * @brief Получает информацию о маршруте автобуса.
-     * @param bus Название автобуса.
-     * @return Структура AllBusInfoBusResponse с информацией о маршруте автобуса.
-     */
+	 * @brief Получает информацию о маршруте автобуса.
+	 * @param bus Название автобуса.
+	 * @return Структура AllBusInfoBusResponse с информацией о маршруте автобуса.
+	 */
 	AllBusInfoBusResponse TransportCatalogue::GetAllBusInfo(string_view bus)  const {
 		AllBusInfoBusResponse bus_info;
 		const Bus* found_bus = FindBus(string(bus));
@@ -147,10 +146,10 @@ namespace transport_catalogue {
 
 	
 	/**
-     * @brief Получает информацию об автобусах, проходящих через указанную остановку.
-     * @param s Название остановки.
-     * @return Множество строк с названиями автобусов, проходящих через указанную остановку.
-     */
+	 * @brief Получает информацию об автобусах, проходящих через указанную остановку.
+	 * @param s Название остановки.
+	 * @return Множество строк с названиями автобусов, проходящих через указанную остановку.
+	 */
 	set<string> TransportCatalogue::GetStopInfo(std::string_view s) const {
 		set<string> res;
 		if (stop_info_.count(s)) {
@@ -163,10 +162,9 @@ namespace transport_catalogue {
 	}
 
 	/**
-     * @brief Adds distances between stops to the transport catalogue.
-     *
-     * @param distance The StopDistancesDescription structure with stop information and distances.
-     */
+	 * @brief Adds distances between stops to the transport catalogue.
+	 * @param distance The StopDistancesDescription structure with stop information and distances.
+	 */
 	void TransportCatalogue::AddStopDistance(StopDistancesDescription distance) {
 		if (distance.distances.size() != 0) {
 			Stop* main_stop_ptr = stop_name_to_stop_[string_view(distance.stop_name)];
@@ -181,11 +179,11 @@ namespace transport_catalogue {
 	}
 
 	/**
-     * @brief Получает расстояние между двумя остановками.
-     * @param s1 Первая остановка.
-     * @param s2 Вторая остановка.
-     * @return Расстояние между остановками или 0, если оно не найдено.
-     */
+	 * @brief Получает расстояние между двумя остановками.
+	 * @param s1 Первая остановка.
+	 * @param s2 Вторая остановка.
+	 * @return Расстояние между остановками или 0, если оно не найдено.
+	 */
 	int TransportCatalogue::GetStopDistance(const Stop& s1, const Stop& s2) const {
 		const Stop* s1_ptr = &s1;
 		const Stop* s2_ptr = &s2;
@@ -204,26 +202,23 @@ namespace transport_catalogue {
 	}
 
 	/**
-     * @brief Returns a constant reference to the deque of buses.
-     *
-     * @return A constant reference to the deque of buses.
-     */
+	 * @brief Returns a constant reference to the deque of buses.
+	 * @return A constant reference to the deque of buses.
+	 */
 	const std::deque<Bus>& TransportCatalogue::GetBuses() const { 
 		return buses_; 
 	}
 
 	/**
-     * @brief Returns a constant reference to the deque of stops.
-     *
-     * @return A constant reference to the deque of stops.
-     */
+	 * @brief Returns a constant reference to the deque of stops.
+	 * @return A constant reference to the deque of stops.
+	 */
 	const std::deque<Stop>& TransportCatalogue::GetStops() const { 
 		return stops_; 
 	}
 
 	/**
 	 * @brief Adds the route settings to the transport catalogue.
-	 *
 	 * @param route_settings The RouteSettings structure with the route settings.
 	 */
 	void TransportCatalogue::AddRouteSettings(const domain::RouteSettings route_settings) {
@@ -233,7 +228,6 @@ namespace transport_catalogue {
 
 	/**
 	 * @brief Gets the wait time at a stop.
-	 * 
 	 * @return The wait time at a stop in minutes.
 	 */
 	double TransportCatalogue::GetWaitTime() { 
