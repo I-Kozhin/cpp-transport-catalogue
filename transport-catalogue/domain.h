@@ -30,9 +30,9 @@ namespace domain {
 	};
 
 	/**
-		 * @struct BusDescription
-		 * @brief Struct representing a bus with a bus name, list of stops, and type.
-		 */
+	 * @struct BusDescription
+	 * @brief Struct representing a bus with a bus name, list of stops, and type.
+	 */
 	struct BusDescription {
 		std::string bus_name;
 		std::vector<std::string> stops;
