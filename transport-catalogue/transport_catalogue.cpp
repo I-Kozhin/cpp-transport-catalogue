@@ -35,9 +35,9 @@ namespace transport_catalogue {
 		bptr.stops = stops_ptr;
 		buses_.push_back(bptr);
 		Bus* bptr_bus = &buses_.back();
-		bus_name_to_bus_.emplace(bus_desc.bus_name, bptr_bus);
+		bus_name_to_bus_.emplace(bptr_bus->bus_name, bptr_bus);
 		for (auto el : stops_ptr) {
-			stop_info_[el].insert(bus_desc.bus_name);
+			stop_info_[el].insert(bptr_bus->bus_name);
 		}
 	}
 
@@ -267,5 +267,36 @@ namespace transport_catalogue {
 	double TransportCatalogue::GetVelocity() { 
 		return bus_velocity_; 
 	}
+
+	void TransportCatalogue::AddSerializePathToFile(const std::string& serialize_file_path) {
+		serialize_file_path_ = serialize_file_path;
+	}
+
+	const std::unordered_map<std::pair<const domain::Stop*, const domain::Stop*>, int, detail::PairOfStopPointerUsingString>& TransportCatalogue::GetStopDistances() const {
+		return stops_distance_;
+	}
+
+	void TransportCatalogue::AddDistanceFromSerializer(const std::vector<domain::Distance>& distances) {
+		for (const auto& distance : distances) {
+			const Stop* startStop = distance.start;
+			const Stop* endStop = distance.end;
+			int distanceValue = distance.distance;
+			stops_distance_.emplace(std::make_pair(startStop, endStop), distanceValue);
+			stops_distance_time_.emplace(std::make_pair(startStop, endStop), distanceValue / (bus_velocity_ * 1000 / 60));
+		}
+	}
+
+	std::string TransportCatalogue::GetSerializerFilePath() const {
+		return serialize_file_path_;
+	}
+
+
+
+    domain::RouteSettings TransportCatalogue::GetRouteSettings() const{
+        RouteSettings rs;
+        rs.bus_velocity = bus_velocity_;
+        rs.bus_wait_time = bus_wait_time_;
+        return rs;
+    }
 
 }   // namespace transport_catalogue

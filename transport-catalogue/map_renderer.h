@@ -21,18 +21,18 @@ namespace transport_catalogue {
      */
     struct RenderData {
 
-        double width;                               /*< The width of the map. */
-        double height;                              /*< The height of the map. */
-        double padding;                             /*< The padding around the map. */
-        double line_width;                          /*< The width of the lines representing routes. */
-        double stop_radius;                         /*< The radius of the stops on the map. */
-        int bus_label_font_size;                    /*< The font size for bus labels on the map. */
-        std::vector<double> bus_label_offset;       /*< The offset for bus labels on the map. */
-        int stop_label_font_size;                   /*< The font size for stop labels on the map. */
-        std::vector<double> stop_label_offset;      /*< The offset for stop labels on the map. */
-        std::vector<svg::Color> underlayer_color;   /*< The color of the underlayer for routes. */
-        double underlayer_width;                    /*< The width of the underlayer for routes. */
-        std::vector<svg::Color> color_palette;      /*< The color palette for routes. */
+        double width_;
+        double height_;
+        double padding_;
+        double line_width_;
+        double stop_radius_;
+        int bus_label_font_size_;
+        std::pair<double, double> bus_label_offset_;
+        int stop_label_font_size_;
+        std::pair<double, double> stop_label_offset_;
+        svg::Color underlayer_color_;
+        double underlayer_width_;
+        std::vector<svg::Color> color_palette_;
 
     };
 

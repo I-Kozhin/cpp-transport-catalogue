@@ -57,8 +57,12 @@ namespace transport_catalogue {
             void ReadInputJsonRenderSettings();
 
 			void ReadInputJsonRouteSettings();
+			void ReadInputJsonSerializeSettings();
 
             void ReadInputJsonRequest();
+
+			void ReadInputJsonRequestForFillBase();
+			void ReadInputJsonRequestForReadBase();
 
             /**
              * @brief Updates the stops in the transport catalogue.
@@ -107,7 +111,6 @@ namespace transport_catalogue {
 							queries.emplace_back(answer_empty_bus);
 
 						}
-
 						else {
 							AllBusInfoBusResponse r = tc.GetAllBusInfo(el.name);
 
@@ -264,6 +267,10 @@ namespace transport_catalogue {
 
 			void UpdRouteSettings(TransportCatalogue& tc);
 
+			void UpdSerializeSettings(TransportCatalogue& tc);
+
+			std::string GetSerializeFilePath();
+
         private:
 
             std::istream& input_stream_;
@@ -274,6 +281,7 @@ namespace transport_catalogue {
             RenderData render_data_;
             json::Document load_;   ///< The loaded JSON document.
             domain::RouteSettings route_settings_;
+			std::string serialize_file_path_;
     };  
 
 }  // namespace transport_catalogue

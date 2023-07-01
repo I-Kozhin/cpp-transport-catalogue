@@ -22,39 +22,31 @@ namespace svg {
  	 * @struct Rgb
  	 * @brief Represents an RGB color.
  	 */
-	struct Rgb {
-		Rgb() = default;
-		Rgb(uint8_t  red, uint8_t  green, uint8_t  blue)
-			: red(red)
-			, green(green)
-			, blue(blue)
-		{
-		}
+	class Rgb {
+		public:
+			Rgb() = default;
+			Rgb(uint8_t red, uint8_t green, uint8_t blue);
 
-		uint8_t red = 0;
-		uint8_t green = 0;
-		uint8_t blue = 0;
-	};
+			uint8_t red_ = 0;
+			uint8_t green_ = 0;
+			uint8_t blue_ = 0;
+    };
+    inline void print_color(std::ostream& out, Rgb& rgb);
 
 	/**
  	 * @struct Rgba
  	 * @brief Represents an RGBA color.
  	 */
-	struct Rgba {
-		Rgba() = default;
-		Rgba(uint8_t  red, uint8_t  green, uint8_t blue, double  opacity)
-			: red(red)
-			, green(green)
-			, blue(blue)
-			, opacity(opacity)
-		{
-		}
+	class Rgba {
+		public:
+			Rgba() = default;
+			Rgba(uint8_t red, uint8_t green, uint8_t blue, double opacity);
 
-		uint8_t red = 0;
-		uint8_t  green = 0;
-		uint8_t blue = 0;
-		double opacity = 1.0;
-	};
+			uint8_t red_ = 0;
+			uint8_t green_ = 0;
+			uint8_t blue_ = 0;
+			double opacity_ = 1.0;
+    };
 
 
 	using Color = std::variant<std::monostate, std::string, Rgb, Rgba>;
@@ -183,7 +175,6 @@ namespace svg {
  	 */
 	struct ColorPrinter {
 		std::ostream& os;
-
 		void operator()(std::monostate) const {
 			os << std::string("none") /*<< std::endl*/;
 		}
@@ -191,10 +182,10 @@ namespace svg {
 			os << s /*<< std::endl*/;
 		}
 		void operator()(const Rgb& r) const {
-			os << "rgb(" << static_cast<unsigned int>(r.red) << "," << static_cast<unsigned int>(r.green) << "," << static_cast<unsigned int>(r.blue) << ")" /*<< std::endl*/;
+			os << "rgb(" << static_cast<unsigned int>(r.red_) << "," << static_cast<unsigned int>(r.green_) << "," << static_cast<unsigned int>(r.blue_) << ")" /*<< std::endl*/;
 		}
 		void operator()(const Rgba& r) const {
-			os << "rgba(" << static_cast<unsigned int>(r.red) << "," << static_cast<unsigned int>(r.green) << "," << static_cast<unsigned int>(r.blue) << "," << r.opacity << ")" /*<< std::endl*/;
+			os << "rgba(" << static_cast<unsigned int>(r.red_) << "," << static_cast<unsigned int>(r.green_) << "," << static_cast<unsigned int>(r.blue_) << "," << r.opacity_ << ")" /*<< std::endl*/;
 		}
 	};
 

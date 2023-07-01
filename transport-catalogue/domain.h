@@ -79,4 +79,10 @@ namespace domain {
 		double bus_wait_time;
 
 	};
+
+	struct Distance {
+		const Stop* start;
+		const Stop* end;
+		int distance;
+	};
 }  // namespace domain
